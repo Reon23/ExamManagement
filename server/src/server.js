@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 
+import userRoutes from "./routes/userRoutes.js";
+import errorHandling from "./middleware/errorHandler.js";
+import createUserTable from "./data/createUserTable.js";
+
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -12,9 +16,13 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
+app.use("/api", userRoutes);
 
 // Error handling
+app.use(errorHandling)
 
+//Create table before server runs
+createUserTable();
 // Test
 app.get("/", async(req, res) => {
     const result = await pool.query("SELECT current_database()");
