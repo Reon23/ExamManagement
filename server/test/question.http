@@ -1,0 +1,61 @@
+### Create QB
+POST http://localhost:5001/api/question_bank
+Content-Type: application/json
+
+{
+  "subject": "Math",
+  "owner_id": 1
+}
+
+### Get all QB
+GET http://localhost:5001/api/question_bank
+
+### Get QB with owner_id
+GET http://localhost:5001/api/question_bank/1
+
+### Delete QB
+DELETE http://localhost:5001/api/question_bank/4
+Content-Type: application/json
+
+{
+  "owner_id": 1
+}
+
+### Add question
+POST http://localhost:5001/api/question
+Content-Type: application/json
+
+{
+  "questionBankId": 4,
+  "question_no": 1,
+  "question": "What is 2 + 2?",
+  "option1": "3",
+  "option2": "4",
+  "option3": "5",
+  "answer": "4",
+  "marks": 5
+}
+
+### Update question
+PUT http://localhost:5001/api/question
+Content-Type: application/json
+
+{
+  "questionBankId": 4,
+  "question_no": 1,
+  "question": "What is 3 + 2?",
+  "option1": "4",
+  "option2": "5",
+  "option3": "6",
+  "answer": "5",
+  "marks": 5
+}
+
+### Delete question
+DELETE http://localhost:5001/api/question
+Content-Type: application/json
+
+{
+  "questionBankId": 4,
+  "question_no": 1
+}

@@ -19,7 +19,7 @@ export const getAllQuestionBanksService = async () => {
 
 export const deleteQuestionBankService = async (questionBankId, owner_id) => {
     const result = await pool.query(
-        'DELETE FROM question_bank WHERE id = $1 AND owner_id = $2 RETURNING *'
+        'DELETE FROM question_bank WHERE id = $1 AND owner_id = $2 RETURNING *',
         [questionBankId, owner_id]
     );
 
@@ -29,7 +29,7 @@ export const deleteQuestionBankService = async (questionBankId, owner_id) => {
 
 export const getQuestionBankByIdService = async (owner_id) => {
     const result = await pool.query(
-        'SELECT * FROM question_bank WHERE owner_id = $1'
+        'SELECT * FROM question_bank WHERE owner_id = $1',
         [owner_id]
     );
     
@@ -56,7 +56,7 @@ export const updateQuestionService = async (questionBankId, question_no, questio
 
 export const deleteQuestionService = async (questionBankId, question_no) => {
     const result = await pool.query(
-        'DELETE FROM question WHERE question_no = $1 AND id = IN(SELECT id FROM question_bank WHERE id = $2) RETURNING *'
+        'DELETE FROM question WHERE question_no = $1 AND id = $2 RETURNING *',
         [question_no, questionBankId]
     );
 

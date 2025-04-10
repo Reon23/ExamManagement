@@ -3,8 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 
-import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import questionRoutes from "./routes/questionRoutes.js";
 import errorHandling from "./middleware/errorHandler.js";
 import { createExamTable, createInstructorTable, createQuestionBankTable, createQuestionTable, createResultTable, createStudentTable } from "./data/createTables.js";
 
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/api", userRoutes);
+app.use("/api", questionRoutes);
 app.use("/api/auth", authRoutes);
 
 // Error handling
