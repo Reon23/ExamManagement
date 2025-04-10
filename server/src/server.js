@@ -6,7 +6,7 @@ import pool from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import errorHandling from "./middleware/errorHandler.js";
-import { createExamTable, createInstructorTable, createQuestionBankTable, createQuestionsTable, createResultTable, createStudentTable } from "./data/createTables.js";
+import { createExamTable, createInstructorTable, createQuestionBankTable, createQuestionTable, createResultTable, createStudentTable } from "./data/createTables.js";
 
 dotenv.config();
 const app = express();
@@ -27,7 +27,7 @@ app.use(errorHandling)
 createInstructorTable();
 createStudentTable();
 createQuestionBankTable();
-createQuestionsTable();
+createQuestionTable();
 createExamTable();
 createResultTable();
 

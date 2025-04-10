@@ -80,16 +80,19 @@ export const createQuestionBankTable = async () => {
     }
 }
 
-export const createQuestionsTable = async () => {
+export const createQuestionTable = async () => {
     const queryText = `
-    CREATE TABLE IF NOT EXISTS questions (
+    CREATE TABLE IF NOT EXISTS question (
         id INTEGER NOT NULL,
         question_no INTEGER NOT NULL,
         question VARCHAR(255) NOT NULL,
+        option1 VARCHAR(255) NOT NULL,
+        option2 VARCHAR(255) NOT NULL,
+        option3 VARCHAR(255) NOT NULL,
         answer VARCHAR(255) NOT NULL,
-        marks INTEGER NOT NULL,
-        FOREIGN KEY(id) REFERENCES question_bank(id)
-    );
+        marks INT NOT NULL,
+        FOREIGN KEY(id) REFERENCES question_bank(id) ON DELETE CASCADE
+    )
     `;
 
     try {
