@@ -1,4 +1,4 @@
-import joi from "joi";
+import Joi from "joi";
 
 // Validates the input given
 

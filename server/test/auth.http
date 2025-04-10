@@ -1,0 +1,32 @@
+### Register a new instructor
+POST http://localhost:5001/api/auth/register
+Content-Type: application/json
+
+{
+  "role": "instructor",
+  "name": "Alice",
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+### Login as instructor
+POST http://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+  "role": "instructor",
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+### Register a new student
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "role": "student",
+  "first_name": "Bob",
+  "last_name": "Smith",
+  "email": "bob@example.com",
+  "password": "password456"
+}

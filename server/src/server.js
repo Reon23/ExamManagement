@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 import pool from "./config/db.js";
 
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import errorHandling from "./middleware/errorHandler.js";
-import createUserTable from "./data/createUserTable.js";
+import { createExamTable, createInstructorTable, createQuestionBankTable, createQuestionsTable, createResultTable, createStudentTable } from "./data/createTables.js";
 
 dotenv.config();
 const app = express();
@@ -17,12 +18,19 @@ app.use(cors());
 
 // Routes
 app.use("/api", userRoutes);
+app.use("/api/auth", authRoutes);
 
 // Error handling
 app.use(errorHandling)
 
-//Create table before server runs
-createUserTable();
+//Create table before server runs (if they do not exist)
+createInstructorTable();
+createStudentTable();
+createQuestionBankTable();
+createQuestionsTable();
+createExamTable();
+createResultTable();
+
 // Test
 app.get("/", async(req, res) => {
     const result = await pool.query("SELECT current_database()");
