@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ServerContext } from '../context/ServerContext';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import LockIcon from '@mui/icons-material/Lock';
 import SchoolIcon from '@mui/icons-material/School';
@@ -8,20 +10,42 @@ import PersonIcon from '@mui/icons-material/Person';
 import studentIcon from '../images/student.png';
 
 const LoginPanel = () => {
+    const { account, loginUser } = useContext(ServerContext);
     const [role, setRole] = useState('instructor');
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [emailNotSet, setEmailNotSet] = useState(false);
+    const [passwordNotSet, setPasswordNotSet] = useState(false);
+    const navigate = useNavigate();
+
+    const Login = async() => {
+        if(!email) {
+            setEmailNotSet(true);
+        }
+        if(!password) {
+            setPasswordNotSet(true);
+        }
+        if (!email || !password) return;
+        await loginUser(role, email, password)
+    }
+
+    useEffect(() => {
+        if(account) navigate("/dashboard");
+    },[account])
+
     return (
         <>
             <div className='w-full items-center flex flex-col justify-center scale-up-center-normal'>
                 <h1 className='mb-10 text-5xl font-bold cursor-default select-none'>
                     Login
                 </h1>
-                <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-5 rounded-md'>
+                <div className={`flex items-center bg-gray-200 p-3 w-6/10 mt-5 rounded-md ${emailNotSet && "border-2 border-red-400"}`}>
                     <AlternateEmailIcon fontSize='large' />
-                    <input name='email' type='email' placeholder='Email' className='w-full text-2xl pl-2 outline-none' />
+                    <input name='email' type='email' placeholder='Email' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setEmail(e.target.value)}/>
                 </div>
-                <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-10 rounded-md'>
+                <div className={`flex items-center bg-gray-200 p-3 w-6/10 mt-10 rounded-md ${passwordNotSet && "border-2 border-red-400"}`}>
                     <LockIcon fontSize='large' />
-                    <input name='password' type='password' placeholder='Password' className='w-full text-2xl pl-2 outline-none' />
+                    <input name='password' type='password' placeholder='Password' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setPassword(e.target.value)}/>
                 </div>
                 <div className='flex items-center mt-5 select-none'>
                     <label className={`text-xl p-2 cursor-pointer ${role === 'instructor' ? "border-green-400 border-2 rounded-full" : "border-gray-300 border-2 rounded-full"}`}>
@@ -35,7 +59,7 @@ const LoginPanel = () => {
                         <span className='pl-2'>student</span>
                     </label>
                 </div>
-                <button className='text-2xl w-6/10 font-bold text-white p-3 mt-8 bg-green-500 hover:bg-green-600 rounded-md cursor-pointer'>
+                <button className='text-2xl w-6/10 font-bold text-white p-3 mt-8 bg-green-500 hover:bg-green-600 rounded-md cursor-pointer' onClick={() => {Login()}}>
                     Login
                 </button>
             </div>

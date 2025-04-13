@@ -6,7 +6,7 @@ export const ServerContext = createContext();
 
 export const ServerProvider = ({ children }) => {
 
-    const [account, setAccount] = useState([]);
+    const [account, setAccount] = useState("");
 
     // Register methods
     const registerInstructor = async (role, name, email, password) => {
@@ -42,15 +42,15 @@ export const ServerProvider = ({ children }) => {
 
     // Login method
     const loginUser = async (role, email, password) => {
-        user = {
-            "role": role,
-            "email": email,
-            "password": password
+        const user = {
+            role: role,
+            email: email,
+            password: password
         }
         axios.post('http://localhost:5001/api/auth/login', user)
         .then(res => {
-            console.log(res.data);
-            setAccount(res.data);
+            console.log(res.data.user);
+            setAccount(res.data.user);
         })
         .catch(err => console.error(err));
     }
