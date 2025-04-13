@@ -1,0 +1,58 @@
+### Create Exam
+POST http://localhost:5001/api/exam
+Content-Type: application/json
+
+{
+  "qid": 4,
+  "iid": 1,
+  "total_marks": 100
+}
+
+### Get All Exams
+GET http://localhost:5001/api/exam
+
+### Get Exam by Instructor ID
+GET http://localhost:5001/api/exam/1
+
+### Update Exam
+PUT http://localhost:5001/api/exam/1
+Content-Type: application/json
+
+{
+  "qid": 4,
+  "total_marks": 80
+}
+
+### Delete Exam
+DELETE http://localhost:5001/api/exam/1
+
+### Create Result
+POST http://localhost:5001/api/result
+Content-Type: application/json
+
+{
+  "eid": 1,
+  "sid": 101,
+  "iid": 1,
+  "final_marks": 75,
+  "total_marks": 100
+}
+
+### Get Result by Instructor ID
+POST http://localhost:5001/api/result/1
+Content-Type: application/json
+
+{
+  "iid": 1
+}
+
+### Get Result by Student ID
+POST http://localhost:5001/api/result/1
+Content-Type: application/json
+
+{
+  "sid": 101
+}
+
+### Delete Result
+DELETE http://localhost:5001/api/result/1

@@ -5,8 +5,17 @@ import pool from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
+import examRoutes from "./routes/examRoutes.js";
 import errorHandling from "./middleware/errorHandler.js";
-import { createExamTable, createInstructorTable, createQuestionBankTable, createQuestionTable, createResultTable, createStudentTable } from "./data/createTables.js";
+
+import { 
+    createExamTable, 
+    createInstructorTable, 
+    createQuestionBankTable, 
+    createQuestionTable, 
+    createResultTable, 
+    createStudentTable 
+} from "./data/createTables.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +27,7 @@ app.use(cors());
 
 // Routes
 app.use("/api", questionRoutes);
+app.use("/api", examRoutes);
 app.use("/api/auth", authRoutes);
 
 // Error handling
