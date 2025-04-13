@@ -10,7 +10,7 @@ function App() {
             <Auth />
           </>
         } />
-        <Route path='/dashboard' element={
+        <Route path='/Dashboard' element={
           <>
             <Dashboard />
           </>

@@ -7,6 +7,7 @@ export const ServerContext = createContext();
 export const ServerProvider = ({ children }) => {
 
     const [account, setAccount] = useState("");
+    const [loginFailed, setLoginFailed] = useState(false)
 
     // Register methods
     const registerInstructor = async (role, name, email, password) => {
@@ -21,7 +22,9 @@ export const ServerProvider = ({ children }) => {
             console.log(res.data);
             setAccount(res.data);
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err)
+        });
     }
 
     const registerStudent = async (role, firstName, lastName, email, password) => {
@@ -47,18 +50,23 @@ export const ServerProvider = ({ children }) => {
             email: email,
             password: password
         }
+        setLoginFailed(false);
         axios.post('http://localhost:5001/api/auth/login', user)
         .then(res => {
             console.log(res.data.user);
             setAccount(res.data.user);
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err);
+            setLoginFailed(true);
+        });
     }
 
     return (
         <ServerContext.Provider value={
             {
                 account,
+                loginFailed,
                 registerInstructor,
                 registerStudent,
                 loginUser,

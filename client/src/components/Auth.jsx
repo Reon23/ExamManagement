@@ -10,7 +10,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import studentIcon from '../images/student.png';
 
 const LoginPanel = () => {
-    const { account, loginUser } = useContext(ServerContext);
+    const { account, loginUser, loginFailed } = useContext(ServerContext);
     const [role, setRole] = useState('instructor');
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
@@ -30,7 +30,7 @@ const LoginPanel = () => {
     }
 
     useEffect(() => {
-        if(account) navigate("/dashboard");
+        if(account) navigate("/Dashboard");
     },[account])
 
     return (
@@ -62,6 +62,11 @@ const LoginPanel = () => {
                 <button className='text-2xl w-6/10 font-bold text-white p-3 mt-8 bg-green-500 hover:bg-green-600 rounded-md cursor-pointer' onClick={() => {Login()}}>
                     Login
                 </button>
+                {loginFailed && (
+                    <>
+                        <span className='mt-5 text-red-500'>Failed to login!</span>
+                    </>
+                )}
             </div>
         </>
     )
