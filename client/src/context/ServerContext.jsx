@@ -7,8 +7,11 @@ export const ServerContext = createContext();
 export const ServerProvider = ({ children }) => {
 
     const [account, setAccount] = useState("");
+    const [questionBanks, setQuestionBanks] = useState([]);
+    const [banksAvail, setBanksAvail] = useState(false);
     const [dashMode, setDashMode] = useState("home");
-    const [loginFailed, setLoginFailed] = useState(false)
+    const [loginFailed, setLoginFailed] = useState(false);
+    const [creatingBank, setCreatingBank] = useState(false);
 
     // Register methods
     const registerInstructor = async (role, name, email, password) => {
@@ -63,17 +66,38 @@ export const ServerProvider = ({ children }) => {
         });
     }
 
+    // Fetch Instructor Question Banks
+    const fetchInstructorBanks = async (id) => {
+        setBanksAvail(false);
+        axios.post(`http://localhost:5001/api/question_bank/${id}`)
+        .then(res => {
+            console.log(res.data);
+            setQuestionBanks(res.data)
+            setBanksAvail(true);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+
     return (
         <ServerContext.Provider value={
             {
                 account,
                 loginFailed,
                 dashMode,
+                questionBanks,
+                banksAvail,
+                creatingBank,
+                setCreatingBank,
+                setBanksAvail,
+                setQuestionBanks,
                 setDashMode,
                 setAccount,
                 registerInstructor,
                 registerStudent,
                 loginUser,
+                fetchInstructorBanks,
             }}>
             {children}
         </ServerContext.Provider>
