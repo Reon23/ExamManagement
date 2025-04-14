@@ -6,7 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { ServerContext } from '../../../context/ServerContext';
 
 const SidePanel = () => {
-    const { setAccount } = useContext(ServerContext);
+    const { setAccount, setDashMode } = useContext(ServerContext);
     const [sidePanelExpand, setSidePanelExpand] = useState(false);
 
     const expandSidePanel = () => {
@@ -25,19 +25,19 @@ const SidePanel = () => {
         <>
             <div className='h-screen w-[5rem] hover:w-[18rem] relative z-10 'onMouseEnter={expandSidePanel} onMouseLeave={collapseSidePanel}>
                 <div className='flex flex-col p-5 text-xl text-white'>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md'>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("home")}>
                         <HomeIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Home</span>
                         )}
                     </span>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md'>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("question")}>
                         <LibraryBooksIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Question Banks</span>
                         )}
                     </span>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md'>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("exam")}>
                         <EditNoteIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Exams</span>

@@ -6,15 +6,15 @@ import Loader from './Loader';
 
 const Dashboard = () => {
     const { account } = useContext(ServerContext);
-    const [ loadingDash, setLoadingDash ] = useState(true);
+    const [ loadingDash, setLoadingDash ] = useState(false);
     const navigate = useNavigate();
 
-    // Ensures user is logged in before navigating to the dashboard
-    useEffect(() => {
-        if(!account) {
-            navigate("/");
-        }
-    },[account])
+    // // Ensures user is logged in before navigating to the dashboard
+    // useEffect(() => {
+    //     if(!account) {
+    //         navigate("/");
+    //     }
+    // },[account])
 
     // Hide dash while loading
     useEffect(() => {
