@@ -7,6 +7,7 @@ export const ServerContext = createContext();
 export const ServerProvider = ({ children }) => {
 
     const [account, setAccount] = useState("");
+    const [dashMode, setDashMode] = useState("home");
     const [loginFailed, setLoginFailed] = useState(false)
 
     // Register methods
@@ -67,6 +68,9 @@ export const ServerProvider = ({ children }) => {
             {
                 account,
                 loginFailed,
+                dashMode,
+                setDashMode,
+                setAccount,
                 registerInstructor,
                 registerStudent,
                 loginUser,
