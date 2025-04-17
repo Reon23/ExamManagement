@@ -17,6 +17,20 @@ const LoginPanel = () => {
     const [passwordNotSet, setPasswordNotSet] = useState(false);
     const navigate = useNavigate();
 
+    // Handle Submit
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            Login();
+        }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    });
+
+    // Hanlde Login
     const Login = async() => {
         if(!email) {
             setEmailNotSet(true);

@@ -4,8 +4,13 @@ import CreateBank from '../../../images/createbank.jpg';
 import ManageBank from '../../../images/managebank.jpg';
 import EmptyBox from '../../../images/box.png'
 import CloseIcon from '@mui/icons-material/Close';
+import ArticleIcon from '@mui/icons-material/Article';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { handleNavigation } from './utils/Navigation';
 import { useNavigate, Routes, Route } from 'react-router-dom';
+import { stripPunctuation } from '../../../utils/cleanText';
+import { formatDate } from '../../../utils/dateFormat';
 
 const Card = ({ title, img}) => {
 
@@ -22,19 +27,32 @@ const Card = ({ title, img}) => {
 }
 
 const CreatePanel = () => {
+    const { createQuestionBank } = useContext(ServerContext);
+    const [bankName, setBankName] = useState("");
     const navigate = useNavigate();
+
+    const handleSubmit = () => {
+        const cleanText = stripPunctuation(bankName)
+
+        if(!cleanText) {
+            console.log("No bank name");
+            return;
+        }
+        createQuestionBank(cleanText);
+    }
+
     return (
         <div>
             <div className='fixed left-0 top-0 w-screen h-screen bg-black opacity-50'/>
             <div className='absolute z-50 w-screen h-screen top-0 left-0 scale-up-center-normal'>
                 <div className='flex flex-col w-full h-full justify-center items-center'>
-                    <div className=' w-3/10 mx-auto relative my-10 bg-gray-900 rounded-3xl flex flex-col items-center'>
+                    <div className=' w-3/10 mx-auto relative my-10 bg-gray-900 rounded-lg flex flex-col items-center'>
                         <div className='absolute left-5 top-5 cursor-pointer' onClick={() => handleNavigation(navigate, "question_bank/")}>
                             <CloseIcon sx={{ color: 'white'}} fontSize='large' />
                         </div>
                         <h1 className='text-3xl font-bold text-center pt-12 text-white'>Create Question Bank</h1>
-                        <input name='subject' type='text' placeholder='Subject' className='w-8/10 outline-none border-gray-800 bg-gray-300 border-2 p-2 my-5 rounded-md text-xl text-black'/>
-                        <button className='p-2 mt-2 mb-5 bg-green-500 hover:bg-green-700 text-white rounded-md cursor-pointer'>Create</button>
+                        <input name='subject' type='text' placeholder='Subject' className='w-8/10 outline-none border-gray-800 bg-gray-300 border-2 p-2 my-5 rounded-md text-xl text-black' onChange={(e) => setBankName(e.target.value)}/>
+                        <button className='p-2 mt-2 mb-5 bg-green-500 hover:bg-green-700 text-white rounded-md cursor-pointer' onClick={handleSubmit}>Create</button>
                     </div>
                 </div>
             </div>
@@ -43,12 +61,10 @@ const CreatePanel = () => {
 }
 
 const QuestionBankPage = () => {
-    const { account, banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
+    const { banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log(account.id);
-        fetchInstructorBanks(account.id);
-
+        fetchInstructorBanks();
     }, []);
 
     useEffect(() => {
@@ -67,6 +83,27 @@ const QuestionBankPage = () => {
             <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Recent Banks</h1>
             {banksAvail ? (
                 <>
+                    <div className='bg-gray-900 ml-[8rem] mr-[2rem] h-[38vh] mb-5 px-4 py-2 rounded-md shadow-lg'>
+                        {questionBanks.map((item, key) => (
+                            <div key={key}>
+                                <div className='bg-gray-700 p-3 mt-2 rounded-lg flex justify-between items-center shadow-xl scale-up-center-normal'>
+                                    <div className='flex items-center'>
+                                        <ArticleIcon fontSize='large' color='primary' />
+                                        <span className='text-2xl text-white ml-2'>{item.subject}</span>
+                                    </div>
+                                    <div className='flex items-center self-center'>
+                                        <span className='text-xl text-gray-300 mr-10'>{formatDate(item.created_at)}</span>
+                                        <button className='bg-green-500 hover:bg-green-600 p-2 rounded-lg cursor-pointer mr-2'>
+                                            <EditIcon fontSize='medium' sx={{ color: 'white'}} />
+                                        </button>
+                                        <button className='bg-red-500 hover:bg-red-600 p-2 rounded-lg cursor-pointer mr-2'>
+                                            <DeleteIcon fontSize='medium' sx={{ color: 'white'}} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </>
             ) : (
                 <div className='bg-gray-900 ml-[8rem] mr-[2rem] rounded-md'>
@@ -81,7 +118,7 @@ const QuestionBankPage = () => {
 }
 
 const QuestionBank = () => {
-    return(
+    return (
         <Routes>
             <Route path="" element={<QuestionBankPage />} />
             <Route path="create" element={

@@ -65,18 +65,34 @@ export const ServerProvider = ({ children }) => {
         });
     }
 
+    // Question Bank Methods
     // Fetch Instructor Question Banks
-    const fetchInstructorBanks = async (id) => {
+    const fetchInstructorBanks = async () => {
         setBanksAvail(false);
-        axios.post(`http://localhost:5001/api/question_bank/${id}`)
+        axios.get(`http://localhost:5001/api/question_bank/${account.id}`)
         .then(res => {
             console.log(res.data);
-            setQuestionBanks(res.data)
+            setQuestionBanks(res.data.data)
             setBanksAvail(true);
         })
         .catch(err => {
             console.error(err);
         });
+    }
+
+    // Create Question Bank
+    const createQuestionBank = async (subject) => {
+        const question_bank = {
+            subject: subject,
+            owner_id: account.id
+        }
+        axios.post('http://localhost:5001/api/question_bank', question_bank)
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(err => {
+            console.error(err);
+        })
     }
 
     return (
@@ -87,6 +103,7 @@ export const ServerProvider = ({ children }) => {
                 questionBanks,
                 banksAvail,
                 role,
+                createQuestionBank,
                 setRole,
                 setBanksAvail,
                 setQuestionBanks,

@@ -26,7 +26,7 @@ export const deleteQuestionBankService = async (questionBankId, owner_id) => {
 
 export const getQuestionBankByIdService = async (owner_id) => {
     const result = await pool.query(
-        'SELECT * FROM question_bank WHERE owner_id = $1',
+        'SELECT * FROM question_bank WHERE owner_id = $1 ORDER BY created_at DESC',
         [owner_id]
     );
     return result.rows;
