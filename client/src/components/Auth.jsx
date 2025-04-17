@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { ServerContext } from '../context/ServerContext';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import LockIcon from '@mui/icons-material/Lock';
@@ -10,8 +10,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import studentIcon from '../images/student.png';
 
 const LoginPanel = () => {
-    const { account, loginUser, loginFailed } = useContext(ServerContext);
-    const [role, setRole] = useState('instructor');
+    const { account, loginUser, loginFailed, role, setRole } = useContext(ServerContext);
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [emailNotSet, setEmailNotSet] = useState(false);
@@ -30,7 +29,7 @@ const LoginPanel = () => {
     }
 
     useEffect(() => {
-        if(account) navigate("/Dashboard");
+        if(account) navigate(`/Dashboard/${role}`);
     },[account])
 
     return (
@@ -73,7 +72,7 @@ const LoginPanel = () => {
 }
 
 const RegisterPanel = () => {
-    const [role, setRole] = useState('instructor');
+    const { role, setRole } = useContext(ServerContext);
     return (
         <>
             <div className='w-full items-center flex flex-col justify-center scale-up-center-normal'>
@@ -126,34 +125,48 @@ const RegisterPanel = () => {
 }
 
 const Auth = () => {
-    const [mode, setMode] = useState("login");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate("/login")
+    }, [])
+
     return (
         <div className='overflow-hidden'>
             <div className={`w-screen h-screen bg-slate-800 flex justify-between`}>
-                <div className='w-[50vw] h-full bg-white rounded-r-md flex flex-col items-center justify-center'>
-                    {mode === 'login' ? (
+                <Routes>
+                    <Route path='login' element={
                         <>
-                            <LoginPanel />
-                            <span className='mt-5'>Are you new?
-                                <span className='text-green-500 underline cursor-pointer' onClick={() => setMode("register")}>Create an account</span>
-                            </span>
+                            <div className='w-[50vw] h-full bg-white rounded-r-md flex flex-col items-center justify-center'>
+                                <LoginPanel />
+                                <span className='mt-5'>Are you new?
+                                    <span className='text-green-500 underline cursor-pointer' onClick={() => navigate("/register")}>Create an account</span>
+                                </span>
+                            </div>
+                            <div className='w-1/2 flex justify-center items-center select-none'>
+                                <img
+                                    src={instructorIcon}
+                                    className={`w-8/12 slide-left-normal`} />
+                            </div>
                         </>
-                    ) : (
+                    } />
+                    <Route path='register' element={
                         <>
-                            <RegisterPanel />
-                            <span className='mt-5'>Have an account?
-                                <span className='text-blue-500 underline cursor-pointer' onClick={() => setMode("login")}>Click to login</span>
-                            </span>
+                            <div className='w-[50vw] h-full bg-white rounded-r-md flex flex-col items-center justify-center'>
+                                <RegisterPanel />
+                                <span className='mt-5'>Have an account?
+                                    <span className='text-blue-500 underline cursor-pointer' onClick={() => navigate("/login")}>Click to login</span>
+                                </span>
+                            </div>
+                            <div className='w-1/2 flex justify-center items-center select-none'>
+                                <img
+                                    key={navigate}
+                                    src={studentIcon}
+                                    className={`slide-left-normal`} />
+                            </div>
                         </>
-                    )}
-                </div>
-                <div className='w-1/2 flex justify-center items-center select-none'>
-                    <img
-                        key={mode}
-                        src={mode === "login" ? instructorIcon : studentIcon}
-                        className={`${mode === "login" ? "w-8/12" : ""} slide-left-normal `} />
-                </div>
-
+                    } />
+                </Routes>
             </div>
         </div>
     )

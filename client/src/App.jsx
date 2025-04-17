@@ -5,12 +5,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={
+        <Route path='/*' element={
           <>
             <Auth />
           </>
         } />
-        <Route path='/Dashboard' element={
+        <Route path='/Dashboard/*' element={
           <>
             <Dashboard />
           </>

@@ -7,19 +7,18 @@ export const ServerContext = createContext();
 export const ServerProvider = ({ children }) => {
 
     const [account, setAccount] = useState("");
+    const [role, setRole] = useState("instructor");
     const [questionBanks, setQuestionBanks] = useState([]);
     const [banksAvail, setBanksAvail] = useState(false);
-    const [dashMode, setDashMode] = useState("home");
     const [loginFailed, setLoginFailed] = useState(false);
-    const [creatingBank, setCreatingBank] = useState(false);
 
     // Register methods
     const registerInstructor = async (role, name, email, password) => {
         instructor = {
-            "role": role,
-            "name": name,
-            "email": email,
-            "password": password
+            role: role,
+            name: name,
+            email: email,
+            password: password
         }
         axios.post('http://localhost:5001/api/auth/register', instructor)
         .then(res => {
@@ -33,11 +32,11 @@ export const ServerProvider = ({ children }) => {
 
     const registerStudent = async (role, firstName, lastName, email, password) => {
         student = {
-            "role": role,
-            "first_name": firstName,
-            "last_name": lastName,
-            "email": email,
-            "password": password
+            role: role,
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password
         }
         axios.post('http://localhost:5001/api/auth/register', student)
         .then(res => {
@@ -85,14 +84,12 @@ export const ServerProvider = ({ children }) => {
             {
                 account,
                 loginFailed,
-                dashMode,
                 questionBanks,
                 banksAvail,
-                creatingBank,
-                setCreatingBank,
+                role,
+                setRole,
                 setBanksAvail,
                 setQuestionBanks,
-                setDashMode,
                 setAccount,
                 registerInstructor,
                 registerStudent,

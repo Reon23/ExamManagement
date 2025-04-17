@@ -4,6 +4,7 @@ import { ServerContext } from '../../context/ServerContext'
 import Home from './Instructor/Home';
 import QuestionBank from './Instructor/QuestionBank';
 import Exam from './Instructor/Exam';
+import { Route, Routes } from 'react-router-dom';
 
 
 const Instructor = () => {
@@ -12,15 +13,11 @@ const Instructor = () => {
     return (
         <div>
             <div className='flex'>
-                {dashMode === "home" && (
-                    <Home />
-                )}
-                {dashMode === "question" && (
-                    <QuestionBank />
-                )}
-                {dashMode === "exam" && (
-                    <Exam />
-                )}
+                <Routes>
+                    <Route path='' element={<Home />}/>
+                    <Route path='question_bank/*' element={<QuestionBank />} />
+                    <Route path='exam' element={<Exam />} />
+                </Routes>
                 <SidePanel />
             </div>
         </div>

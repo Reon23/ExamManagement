@@ -4,10 +4,13 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ServerContext } from '../../../context/ServerContext';
+import { useNavigate } from 'react-router-dom';
+import { handleNavigation } from './utils/Navigation';
 
 const SidePanel = () => {
-    const { setAccount, setDashMode } = useContext(ServerContext);
+    const { setAccount } = useContext(ServerContext);
     const [sidePanelExpand, setSidePanelExpand] = useState(false);
+    const navigate = useNavigate();
 
     const expandSidePanel = () => {
         if(!sidePanelExpand) setSidePanelExpand(true);
@@ -25,19 +28,19 @@ const SidePanel = () => {
         <>
             <div className='h-screen w-[5rem] hover:w-[18rem] relative z-10 'onMouseEnter={expandSidePanel} onMouseLeave={collapseSidePanel}>
                 <div className='flex flex-col p-5 text-xl text-white'>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("home")}>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => handleNavigation(navigate, "")}>
                         <HomeIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Home</span>
                         )}
                     </span>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("question")}>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => handleNavigation(navigate, "question_bank")}>
                         <LibraryBooksIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Question Banks</span>
                         )}
                     </span>
-                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => setDashMode("exam")}>
+                    <span className='flex items-center mt-5 cursor-pointer hover:bg-slate-900 p-2 rounded-md' onClick={() => handleNavigation(navigate, "exam")}>
                         <EditNoteIcon fontSize='large' />
                         {sidePanelExpand && (
                             <span className='ml-2 fade-in-left-normal'>Exams</span>

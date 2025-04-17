@@ -4,6 +4,8 @@ import CreateBank from '../../../images/createbank.jpg';
 import ManageBank from '../../../images/managebank.jpg';
 import EmptyBox from '../../../images/box.png'
 import CloseIcon from '@mui/icons-material/Close';
+import { handleNavigation } from './utils/Navigation';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 
 const Card = ({ title, img}) => {
 
@@ -20,14 +22,14 @@ const Card = ({ title, img}) => {
 }
 
 const CreatePanel = () => {
-    const { setCreatingBank } = useContext(ServerContext);
+    const navigate = useNavigate();
     return (
         <div>
             <div className='fixed left-0 top-0 w-screen h-screen bg-black opacity-50'/>
             <div className='absolute z-50 w-screen h-screen top-0 left-0 scale-up-center-normal'>
                 <div className='flex flex-col w-full h-full justify-center items-center'>
                     <div className=' w-3/10 mx-auto relative my-10 bg-gray-900 rounded-3xl flex flex-col items-center'>
-                        <div className='absolute left-5 top-5 cursor-pointer' onClick={() => setCreatingBank(false)}>
+                        <div className='absolute left-5 top-5 cursor-pointer' onClick={() => handleNavigation(navigate, "question_bank/")}>
                             <CloseIcon sx={{ color: 'white'}} fontSize='large' />
                         </div>
                         <h1 className='text-3xl font-bold text-center pt-12 text-white'>Create Question Bank</h1>
@@ -40,8 +42,9 @@ const CreatePanel = () => {
     )
 }
 
-const QuestionBank = () => {
-    const { account, banksAvail, questionBanks, fetchInstructorBanks, creatingBank, setCreatingBank } = useContext(ServerContext);
+const QuestionBankPage = () => {
+    const { account, banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
+    const navigate = useNavigate();
     useEffect(() => {
         console.log(account.id);
         fetchInstructorBanks(account.id);
@@ -56,7 +59,7 @@ const QuestionBank = () => {
         <div className='fixed left-0 w-full h-screen bg-gray-800 overflow-y-auto overflow-x-hidden'>
             <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Question Banks</h1>
             <div className='flex flex-row gap-4 w-full mx-10 ml-[8rem]'>
-                <div onClick={() => setCreatingBank(true)}>
+                <div onClick={() => handleNavigation(navigate, "question_bank/create")}>
                     <Card title={"Create Question Bank"} img={CreateBank}/>
                 </div>
                 <Card title={"Manage Question Banks"} img={ManageBank}/>
@@ -73,10 +76,20 @@ const QuestionBank = () => {
                     </div>
                 </div>
             )}
-            {creatingBank && (
-                <CreatePanel />
-            )}
         </div>
+    )
+}
+
+const QuestionBank = () => {
+    return(
+        <Routes>
+            <Route path="" element={<QuestionBankPage />} />
+            <Route path="create" element={
+                <>
+                    <QuestionBankPage />
+                    <CreatePanel />
+                </>} />
+        </Routes>
     )
 }
 
