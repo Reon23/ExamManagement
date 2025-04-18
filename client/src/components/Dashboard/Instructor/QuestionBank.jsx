@@ -64,9 +64,19 @@ const CreatePanel = () => {
 }
 
 const EditPage = () => {
-    const { buffer } = useContext(ServerContext);
+    const { buffer, addQuestionToDatabase, fetchQuestionsFromDatabase, fetchedQuestions } = useContext(ServerContext);
     const [ questions, setQuestions ] = useState([]);
     const [ totalMarks, setTotalMarks ] = useState(0);
+
+    useEffect(() => {
+        fetchQuestionsFromDatabase(buffer.id);
+    }, [])
+
+    useEffect(() => {
+        if (fetchedQuestions.length > 0) {
+            fetchTotalMarks();
+        }
+    }, [fetchedQuestions])
 
     const handleQuestionChange = (questionIndex, newValue) => {
         const updatedQuestions = [...questions];
@@ -90,7 +100,7 @@ const EditPage = () => {
 
         setQuestions(updatedQuestions);
     };
-    
+
     const handleAnswerSelect = (questionIndex, newValue) => {
         const updatedQuestions = [...questions];
         updatedQuestions[questionIndex].answer = newValue;
@@ -105,7 +115,7 @@ const EditPage = () => {
     }
 
     const addQuestion = () => {
-        setQuestions([...questions, { id: uuidv4(), question: '', options: ['', '', '', ''], answer: '', marks: 0}]);
+        setQuestions([...questions, { id: uuidv4(), question: '', options: ['', '', '', ''], answer: '', marks: 0 }]);
     }
 
     const removeQuestion = (id) => {
@@ -113,13 +123,49 @@ const EditPage = () => {
         setQuestions(updatedQuestions);
     }
 
-    const handleSubmit = () => {
-        console.log(questions);
+    const handleSubmit = async () => {
+        if (questions.length > 0)
+            for (let i = 0; i < questions.length; i++) {
+                let qid, question, option1, option2, option3, option4, answer, marks;
+                qid = questions[i].id;
+                question = questions[i].question;
+                answer = questions[i].answer;
+                marks = Number(questions[i].marks);
+                for (let j = 0; j < questions[i].options.length; j++) {
+                    switch (j) {
+                        case 0:
+                            option1 = questions[i].options[j];
+                            break;
+                        case 1:
+                            option2 = questions[i].options[j];
+                            break;
+                        case 2:
+                            option3 = questions[i].options[j];
+                            break;
+                        case 3:
+                            option4 = questions[i].options[j];
+                            break;
+                    }
+                }
+                // console.log(qid);
+                // console.log(question);
+                // console.log(answer);
+                // console.log(marks);
+                // console.log("options : ", option1, option2, option3, option4);
+                if (qid && question && option1 && option2 && option3 && option4 && answer && marks) {
+                    addQuestionToDatabase(buffer.id, qid, question, option1, option2, option3, option4, answer, marks);
+                }
+                else console.error("Details missing");
+            }
+        else console.log("No questions :(");
     }
 
     const fetchTotalMarks = () => {
+        setTotalMarks(0);
         let marks = 0;
-        for(let i = 0; i < questions.length; i++)
+        for (let i = 0; i < fetchedQuestions.length; i++)
+            marks += Number(fetchedQuestions[i].marks);
+        for (let i = 0; i < questions.length; i++)
             marks += Number(questions[i].marks);
 
         setTotalMarks(marks);
@@ -132,18 +178,48 @@ const EditPage = () => {
                 <div className='w-3/5 bg-gray-900 rounded-md p-4 relative shadow-2xl scale-up-center-normal'>
                     <h1 className='text-3xl font-bold text-gray-400 mb-4'>Questions</h1>
                     <div className='mb-14 overflow-y-auto h-[70vh]'>
-                        {questions.length > 0 ? (
+                        {fetchedQuestions.length > 0 && (
+                            <>
+                                {fetchedQuestions.map((question, index) => (
+                                    <div key={question.id} className='mt-4'>
+                                        <div className='flex justify-between'>
+                                            <div>
+                                                <span className='text-xl text-white mr-2'>{index + 1}.</span>
+                                                <input name='question' type='text' placeholder='Enter question' defaultValue={question.question} className='text-xl text-white' required />
+                                            </div>
+                                            <div>
+                                                <span className='text-xl text-gray-300 mr-2'>marks :</span>
+                                                <input name='marks' type='number' defaultValue={question.marks} className='text-xl text-white w-20 mr-6 text-right' required />
+                                            </div>
+                                        </div>
+                                        <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
+                                            {question.options.map((option, optionIndex) => (
+                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(index, option)}>
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} defaultValue={option} className='outline-none text-xl text-white' required />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className='flex justify-end mr-5'>
+                                            <button className='text-red-600 hover:text-red-700 cursor-pointer underline text-base py-2' >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                        {questions.length > 0 && (
                             <>
                                 {questions.map((question, index) => (
                                     <div key={question.id} className='mt-4'>
                                         <div className='flex justify-between'>
                                             <div>
-                                                <span className='text-xl text-white mr-2'>{index + 1}.</span>
+                                                <span className='text-xl text-white mr-2'>{(fetchedQuestions.length) + index + 1}.</span>
                                                 <input name='question' type='text' placeholder='Enter question' className='text-xl text-white' required onChange={(e) => handleQuestionChange(index, e.target.value)} />
                                             </div>
                                             <div>
                                                 <span className='text-xl text-gray-300 mr-2'>marks :</span>
-                                                <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(index, e.target.value)}/>
+                                                <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(index, e.target.value)} />
                                             </div>
                                         </div>
                                         <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
@@ -161,7 +237,8 @@ const EditPage = () => {
                                     </div>
                                 ))}
                             </>
-                        ) : (
+                        )}
+                        {!fetchedQuestions.length > 0 && !questions.length > 0 && (
                             <h2 className='text-gray-500 mt-2'>*Your bank currently has no questions</h2>
                         )}
                     </div>
@@ -181,7 +258,7 @@ const EditPage = () => {
                     <h1 className='text-white font-bold text-3xl flex-wrap w-1/4 text-center'>{buffer.subject}</h1>
                     <hr className='border-gray-600 border-[0.5] w-10/12 my-5' />
                     <div className='w-10/12'>
-                        <h1 className='text-white text-lg'>Questions : {questions.length}</h1>
+                        <h1 className='text-white text-lg'>Questions : {fetchedQuestions.length + questions.length}</h1>
                         <h1 className='text-white text-lg'>Marks : {totalMarks}</h1>
                     </div>
                 </div>

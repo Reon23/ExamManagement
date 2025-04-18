@@ -40,6 +40,14 @@ export const addQuestionService = async (questionBankId, question_id, question, 
     return result.rows[0];
 }
 
+export const fetchQuestionsService = async (questionBankId) => {
+    const result = await pool.query(
+        "SELECT * FROM question WHERE qbid = $1",
+        [questionBankId]
+    );
+    return result.rows;
+}
+
 export const updateQuestionService = async (questionBankId, question_no, question, option1, option2, option3, answer, marks) => {
     const result = await pool.query(
         "UPDATE question set question = $1, option1 = $2, option2 = $3, option3 = $4, answer = $5, marks = $6 WHERE id = $7 AND question_no = $8 RETURNING *",

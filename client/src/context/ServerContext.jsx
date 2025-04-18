@@ -9,6 +9,7 @@ export const ServerProvider = ({ children }) => {
     const [account, setAccount] = useState("");
     const [role, setRole] = useState("instructor");
     const [buffer, setBuffer] = useState("");
+    const [ fetchedQuestions, setFetchedQuestions ] = useState([]);
     const [questionBanks, setQuestionBanks] = useState([]);
     const [banksAvail, setBanksAvail] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
@@ -97,8 +98,8 @@ export const ServerProvider = ({ children }) => {
     }
 
     // Add Question
-    const addQuestion = async (qbid, qid, question, option1, option2, option3, option4, answer, marks) => {
-        const question = {
+    const addQuestionToDatabase = async (qbid, qid, question, option1, option2, option3, option4, answer, marks) => {
+        const question_json = {
             questionBankId: qbid,
             question_id: qid,
             question: question,
@@ -109,6 +110,41 @@ export const ServerProvider = ({ children }) => {
             answer: answer,
             marks: marks,
         }
+        axios.post('http://localhost:5001/api/question', question_json)
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(err => {
+            console.error(err);
+        })
+    }
+
+    const fetchQuestionsFromDatabase = async (qbid) => {
+        setFetchedQuestions([]);
+        axios.get(`http://localhost:5001/api/question/${qbid}`)
+        .then(res => {
+            console.log(res.data);
+            const data = res.data.data;
+            structureQuestionData(data);
+        })
+        .catch(err => {
+            console.error(err);
+        })
+    }
+
+    const structureQuestionData = (data) => {
+        const structuredData = [];
+        for(let i = 0; i < data.length; i++) {
+            structuredData.push({
+                id: data[i].qid,
+                question: data[i].question,
+                options: [data[i].option1, data[i].option2, data[i].option3, data[i].option4],
+                answer: data[i].answer,
+                marks: data[i].marks
+            });
+        }
+        console.log(structuredData);
+        setFetchedQuestions(structuredData);
     }
 
     return (
@@ -120,6 +156,9 @@ export const ServerProvider = ({ children }) => {
                 banksAvail,
                 role,
                 buffer,
+                fetchedQuestions,
+                fetchQuestionsFromDatabase,
+                addQuestionToDatabase,
                 setBuffer,
                 createQuestionBank,
                 setRole,

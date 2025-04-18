@@ -3,6 +3,7 @@ import {
     createQuestionBankService, 
     deleteQuestionBankService, 
     deleteQuestionService, 
+    fetchQuestionsService, 
     getAllQuestionBanksService, 
     getQuestionBankByIdService, 
     updateQuestionService
@@ -75,6 +76,19 @@ export const addQuestion = async (req, res) => {
     catch (err) {
         console.error("Error adding question:", err);
         handleResponse(res, 500, "failed to add question")
+    }
+}
+
+export const fetchQuestions = async (req, res) => {
+    const questionBankId = req.params.id;
+
+    try {
+        const questions_result = await fetchQuestionsService( questionBankId );
+        handleResponse(res, 200, "questions fetched sucessfully", questions_result)
+    }
+    catch (err) {
+        console.error("Error fetching questions:", err);
+        handleResponse(res, 500, "failed to fetch questions")
     }
 }
 
