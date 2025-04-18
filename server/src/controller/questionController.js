@@ -66,10 +66,10 @@ export const getQuestionBankById = async (req, res) => {
 }
 
 export const addQuestion = async (req, res) => {
-    const { questionBankId, question_no, question, option1, option2, option3, answer, marks } = req.body;
+    const { questionBankId, question_id, question, option1, option2, option3, option4, answer, marks } = req.body;
 
     try {
-        const question_result = await addQuestionService( questionBankId, question_no, question, option1, option2, option3, answer, marks );
+        const question_result = await addQuestionService( questionBankId, question_id, question, option1, option2, option3, option4, answer, marks );
         handleResponse(res, 200, "question added sucessfully", question_result)
     }
     catch (err) {

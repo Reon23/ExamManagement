@@ -83,15 +83,16 @@ export const createQuestionBankTable = async () => {
 export const createQuestionTable = async () => {
     const queryText = `
     CREATE TABLE IF NOT EXISTS question (
-        id INTEGER NOT NULL,
-        question_no INTEGER NOT NULL,
+        qbid INTEGER NOT NULL,
+        qid VARCHAR(255) PRIMARY KEY NOT NULL,
         question VARCHAR(255) NOT NULL,
         option1 VARCHAR(255) NOT NULL,
         option2 VARCHAR(255) NOT NULL,
         option3 VARCHAR(255) NOT NULL,
+        option4 VARCHAR(255) NOT NULL,
         answer VARCHAR(255) NOT NULL,
         marks INT NOT NULL,
-        FOREIGN KEY(id) REFERENCES question_bank(id) ON DELETE CASCADE
+        FOREIGN KEY(qbid) REFERENCES question_bank(id) ON DELETE CASCADE
     )
     `;
 

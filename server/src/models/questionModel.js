@@ -32,10 +32,10 @@ export const getQuestionBankByIdService = async (owner_id) => {
     return result.rows;
 }
 
-export const addQuestionService = async (questionBankId, question_no, question, option1, option2, option3, answer, marks) => {
+export const addQuestionService = async (questionBankId, question_id, question, option1, option2, option3, option4, answer, marks) => {
     const result = await pool.query(
-        "INSERT INTO question (id, question_no, question, option1, option2, option3, answer, marks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-        [questionBankId, question_no, question, option1, option2, option3, answer, marks]
+        "INSERT INTO question (qbid, qid, question, option1, option2, option3, option4, answer, marks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+        [questionBankId, question_id, question, option1, option2, option3, option4, answer, marks]
     );
     return result.rows[0];
 }

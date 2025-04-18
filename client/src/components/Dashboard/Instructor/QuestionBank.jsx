@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 import { ServerContext } from '../../../context/ServerContext';
 import CreateBank from '../../../images/createbank.jpg';
 import ManageBank from '../../../images/managebank.jpg';
@@ -7,6 +8,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import { handleNavigation } from './utils/Navigation';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import { stripPunctuation } from '../../../utils/cleanText';
@@ -60,9 +63,146 @@ const CreatePanel = () => {
     )
 }
 
+const EditPage = () => {
+    const { buffer } = useContext(ServerContext);
+    const [ questions, setQuestions ] = useState([]);
+    const [ totalMarks, setTotalMarks ] = useState(0);
+
+    const handleQuestionChange = (questionIndex, newValue) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[questionIndex].question = newValue;
+        setQuestions(updatedQuestions);
+    };
+
+    const handleOptionChange = (questionIndex, optionIndex, newValue) => {
+        const updatedQuestions = [...questions];
+
+        // Check if this option is currently the selected answer BEFORE updating
+        const isAnswer = updatedQuestions[questionIndex].answer === updatedQuestions[questionIndex].options[optionIndex];
+
+        // Now update the option
+        updatedQuestions[questionIndex].options[optionIndex] = newValue;
+
+        // If this was the selected answer, update the answer to the new value too
+        if (isAnswer) {
+            updatedQuestions[questionIndex].answer = newValue;
+        }
+
+        setQuestions(updatedQuestions);
+    };
+    
+    const handleAnswerSelect = (questionIndex, newValue) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[questionIndex].answer = newValue;
+        setQuestions(updatedQuestions);
+    };
+
+    const handleMarksChange = (questionIndex, newValue) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[questionIndex].marks = newValue;
+        setQuestions(updatedQuestions);
+        fetchTotalMarks();
+    }
+
+    const addQuestion = () => {
+        setQuestions([...questions, { id: uuidv4(), question: '', options: ['', '', '', ''], answer: '', marks: 0}]);
+    }
+
+    const removeQuestion = (id) => {
+        const updatedQuestions = questions.filter((q) => q.id !== id);
+        setQuestions(updatedQuestions);
+    }
+
+    const handleSubmit = () => {
+        console.log(questions);
+    }
+
+    const fetchTotalMarks = () => {
+        let marks = 0;
+        for(let i = 0; i < questions.length; i++)
+            marks += Number(questions[i].marks);
+
+        setTotalMarks(marks);
+    }
+
+    return (
+        <div className='fixed left-0 w-full h-screen bg-gray-800 overflow-y-auto overflow-x-hidden'>
+            <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Edit Question Bank</h1>
+            <div className='w-full pl-28 flex gap-5'>
+                <div className='w-3/5 bg-gray-900 rounded-md p-4 relative shadow-2xl scale-up-center-normal'>
+                    <h1 className='text-3xl font-bold text-gray-400 mb-4'>Questions</h1>
+                    <div className='mb-14 overflow-y-auto h-[70vh]'>
+                        {questions.length > 0 ? (
+                            <>
+                                {questions.map((question, index) => (
+                                    <div key={question.id} className='mt-4'>
+                                        <div className='flex justify-between'>
+                                            <div>
+                                                <span className='text-xl text-white mr-2'>{index + 1}.</span>
+                                                <input name='question' type='text' placeholder='Enter question' className='text-xl text-white' required onChange={(e) => handleQuestionChange(index, e.target.value)} />
+                                            </div>
+                                            <div>
+                                                <span className='text-xl text-gray-300 mr-2'>marks :</span>
+                                                <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(index, e.target.value)}/>
+                                            </div>
+                                        </div>
+                                        <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
+                                            {question.options.map((option, optionIndex) => (
+                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(index, option)}>
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className='flex justify-end mr-5'>
+                                            <button className='text-red-600 hover:text-red-700 cursor-pointer underline text-base py-2' onClick={() => removeQuestion(question.id)}>
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        ) : (
+                            <h2 className='text-gray-500 mt-2'>*Your bank currently has no questions</h2>
+                        )}
+                    </div>
+                    <div className='absolute bottom-5 mt-5 flex gap-2'>
+                        <button className='text-white text-xl p-2 bg-green-500 hover:bg-green-600 cursor-pointer rounded-lg flex items-center' onClick={() => addQuestion()}>
+                            <AddIcon fontSize='medium' />
+                            Add
+                        </button>
+                        <button className='text-white text-xl p-2 bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-lg flex items-center' onClick={() => handleSubmit()}>
+                            <SaveIcon fontSize='medium' />
+                            Save
+                        </button>
+                    </div>
+                </div>
+                <div className='w-2/5 flex flex-col items-center bg-gray-700 rounded-md mr-5 shadow-2xl scale-up-center-normal'>
+                    <ArticleIcon sx={{ fontSize: 150 }} color='primary' className='mt-10' />
+                    <h1 className='text-white font-bold text-3xl flex-wrap w-1/4 text-center'>{buffer.subject}</h1>
+                    <hr className='border-gray-600 border-[0.5] w-10/12 my-5' />
+                    <div className='w-10/12'>
+                        <h1 className='text-white text-lg'>Questions : {questions.length}</h1>
+                        <h1 className='text-white text-lg'>Marks : {totalMarks}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const QuestionBankPage = () => {
-    const { banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
+    const { setBuffer, banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
     const navigate = useNavigate();
+
+    const handleClick = (id, subject) => {
+        const data = {
+            id: id,
+            subject: subject,
+        }
+        setBuffer(data);
+        handleNavigation(navigate, "question_bank/edit")
+    }
+
     useEffect(() => {
         fetchInstructorBanks();
     }, []);
@@ -70,15 +210,15 @@ const QuestionBankPage = () => {
     useEffect(() => {
         if (banksAvail) console.log(questionBanks);
     }, [banksAvail]);
-    
+
     return (
         <div className='fixed left-0 w-full h-screen bg-gray-800 overflow-y-auto overflow-x-hidden'>
             <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Question Banks</h1>
             <div className='flex flex-row gap-4 w-full mx-10 ml-[8rem]'>
                 <div onClick={() => handleNavigation(navigate, "question_bank/create")}>
-                    <Card title={"Create Question Bank"} img={CreateBank}/>
+                    <Card title={"Create Question Bank"} img={CreateBank} />
                 </div>
-                <Card title={"Manage Question Banks"} img={ManageBank}/>
+                <Card title={"Manage Question Banks"} img={ManageBank} />
             </div>
             <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Recent Banks</h1>
             {banksAvail ? (
@@ -93,11 +233,11 @@ const QuestionBankPage = () => {
                                     </div>
                                     <div className='flex items-center self-center'>
                                         <span className='text-xl text-gray-300 mr-10'>{formatDate(item.created_at)}</span>
-                                        <button className='bg-green-500 hover:bg-green-600 p-2 rounded-lg cursor-pointer mr-2'>
-                                            <EditIcon fontSize='medium' sx={{ color: 'white'}} />
+                                        <button className='bg-green-500 hover:bg-green-600 p-2 rounded-lg cursor-pointer mr-2' onClick={() => handleClick(item.id, item.subject)}>
+                                            <EditIcon fontSize='medium' sx={{ color: 'white' }} />
                                         </button>
                                         <button className='bg-red-500 hover:bg-red-600 p-2 rounded-lg cursor-pointer mr-2'>
-                                            <DeleteIcon fontSize='medium' sx={{ color: 'white'}} />
+                                            <DeleteIcon fontSize='medium' sx={{ color: 'white' }} />
                                         </button>
                                     </div>
                                 </div>
@@ -126,6 +266,7 @@ const QuestionBank = () => {
                     <QuestionBankPage />
                     <CreatePanel />
                 </>} />
+            <Route path="edit" element={<EditPage />} />
         </Routes>
     )
 }

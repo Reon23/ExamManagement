@@ -8,6 +8,7 @@ export const ServerProvider = ({ children }) => {
 
     const [account, setAccount] = useState("");
     const [role, setRole] = useState("instructor");
+    const [buffer, setBuffer] = useState("");
     const [questionBanks, setQuestionBanks] = useState([]);
     const [banksAvail, setBanksAvail] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
@@ -95,6 +96,21 @@ export const ServerProvider = ({ children }) => {
         })
     }
 
+    // Add Question
+    const addQuestion = async (qbid, qid, question, option1, option2, option3, option4, answer, marks) => {
+        const question = {
+            questionBankId: qbid,
+            question_id: qid,
+            question: question,
+            option1: option1,
+            option2: option2,
+            option3: option3,
+            option4: option4,
+            answer: answer,
+            marks: marks,
+        }
+    }
+
     return (
         <ServerContext.Provider value={
             {
@@ -103,6 +119,8 @@ export const ServerProvider = ({ children }) => {
                 questionBanks,
                 banksAvail,
                 role,
+                buffer,
+                setBuffer,
                 createQuestionBank,
                 setRole,
                 setBanksAvail,

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS question (
     option1 VARCHAR(255) NOT NULL,
     option2 VARCHAR(255) NOT NULL,
     option3 VARCHAR(255) NOT NULL,
+    option4 VARCHAR(255) NOT NULL,
     answer VARCHAR(255) NOT NULL,
     marks INT NOT NULL,
     FOREIGN KEY(id) REFERENCES question_bank(id) ON DELETE CASCADE
