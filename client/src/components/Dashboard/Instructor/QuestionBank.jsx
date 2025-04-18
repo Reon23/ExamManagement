@@ -64,27 +64,36 @@ const CreatePanel = () => {
 }
 
 const EditPage = () => {
-    const { buffer, addQuestionToDatabase, fetchQuestionsFromDatabase, fetchedQuestions } = useContext(ServerContext);
+    const { buffer, addQuestionToDatabase, fetchQuestionsFromDatabase, fetchedQuestions, setFetchedQuestions, updateQuestionOnDatabase, deleteQuestionOnDatabase } = useContext(ServerContext);
     const [ questions, setQuestions ] = useState([]);
     const [ totalMarks, setTotalMarks ] = useState(0);
+    const [updateQuestions, setUpdateQuestions] = useState([]);
 
     useEffect(() => {
         fetchQuestionsFromDatabase(buffer.id);
     }, [])
 
     useEffect(() => {
-        if (fetchedQuestions.length > 0) {
+        if (fetchedQuestions.length || questions.length) {
             fetchTotalMarks();
         }
-    }, [fetchedQuestions])
+        else {
+            setTotalMarks(0);
+        }
+    }, [fetchedQuestions, questions])
 
-    const handleQuestionChange = (questionIndex, newValue) => {
+    const handleQuestionChange = (questions, questionIndex, newValue, update = false) => {
         const updatedQuestions = [...questions];
         updatedQuestions[questionIndex].question = newValue;
-        setQuestions(updatedQuestions);
+        if (!update)
+            setQuestions(updatedQuestions);
+        else {
+            setFetchedQuestions(updatedQuestions);
+            appendQuestionForUpdate(updatedQuestions[questionIndex].id);
+        }
     };
 
-    const handleOptionChange = (questionIndex, optionIndex, newValue) => {
+    const handleOptionChange = (questions, questionIndex, optionIndex, newValue, update = false) => {
         const updatedQuestions = [...questions];
 
         // Check if this option is currently the selected answer BEFORE updating
@@ -98,19 +107,34 @@ const EditPage = () => {
             updatedQuestions[questionIndex].answer = newValue;
         }
 
-        setQuestions(updatedQuestions);
+        if (!update)
+            setQuestions(updatedQuestions);
+        else {
+            setFetchedQuestions(updatedQuestions);
+            appendQuestionForUpdate(updatedQuestions[questionIndex].id);
+        }
     };
 
-    const handleAnswerSelect = (questionIndex, newValue) => {
+    const handleAnswerSelect = (questions, questionIndex, newValue, update = false) => {
         const updatedQuestions = [...questions];
         updatedQuestions[questionIndex].answer = newValue;
-        setQuestions(updatedQuestions);
+        if (!update)
+            setQuestions(updatedQuestions);
+        else {
+            setFetchedQuestions(updatedQuestions);
+            appendQuestionForUpdate(updatedQuestions[questionIndex].id);
+        }
     };
 
-    const handleMarksChange = (questionIndex, newValue) => {
+    const handleMarksChange = (questions, questionIndex, newValue, update = false) => {
         const updatedQuestions = [...questions];
         updatedQuestions[questionIndex].marks = newValue;
-        setQuestions(updatedQuestions);
+        if (!update)
+            setQuestions(updatedQuestions);
+        else {
+            setFetchedQuestions(updatedQuestions);
+            appendQuestionForUpdate(updatedQuestions[questionIndex].id);
+        }
         fetchTotalMarks();
     }
 
@@ -123,9 +147,27 @@ const EditPage = () => {
         setQuestions(updatedQuestions);
     }
 
-    const handleSubmit = async () => {
+    const deleteQuestion = (qid) => {
+        console.log(buffer.id, qid);
+        if (buffer.id && qid)
+            deleteQuestionOnDatabase(buffer.id, qid);
+    }
+
+    const appendQuestionForUpdate = (id) => {
+        if (updateQuestions.includes(id)) {
+            return;
+        };
+        setUpdateQuestions([...updateQuestions, id]);
+    }
+
+    const handleSubmit = async (questions, update = false) => {
         if (questions.length > 0)
             for (let i = 0; i < questions.length; i++) {
+                // if(update && !updateQuestions.includes(questions[i].id)){
+                //     console.log("List contains : ", updateQuestions);
+                //     console.log("Loop broken for id : ", questions[i].id);
+                //     break;
+                // }
                 let qid, question, option1, option2, option3, option4, answer, marks;
                 qid = questions[i].id;
                 question = questions[i].question;
@@ -153,11 +195,18 @@ const EditPage = () => {
                 // console.log(marks);
                 // console.log("options : ", option1, option2, option3, option4);
                 if (qid && question && option1 && option2 && option3 && option4 && answer && marks) {
-                    addQuestionToDatabase(buffer.id, qid, question, option1, option2, option3, option4, answer, marks);
+                    if (!update) {
+                        addQuestionToDatabase(buffer.id, qid, question, option1, option2, option3, option4, answer, marks);
+                        setQuestions([]);
+                    }
+                    else {
+                        updateQuestionOnDatabase(buffer.id, qid, question, option1, option2, option3, option4, answer, marks);
+                    }
                 }
                 else console.error("Details missing");
             }
         else console.log("No questions :(");
+        setUpdateQuestions([]);
     }
 
     const fetchTotalMarks = () => {
@@ -185,22 +234,22 @@ const EditPage = () => {
                                         <div className='flex justify-between'>
                                             <div>
                                                 <span className='text-xl text-white mr-2'>{index + 1}.</span>
-                                                <input name='question' type='text' placeholder='Enter question' defaultValue={question.question} className='text-xl text-white' required />
+                                                <input name='question' type='text' placeholder='Enter question' defaultValue={question.question} className='text-xl text-white' required onChange={(e) => handleQuestionChange(fetchedQuestions, index, e.target.value, true)} />
                                             </div>
                                             <div>
                                                 <span className='text-xl text-gray-300 mr-2'>marks :</span>
-                                                <input name='marks' type='number' defaultValue={question.marks} className='text-xl text-white w-20 mr-6 text-right' required />
+                                                <input name='marks' type='number' defaultValue={question.marks} className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(fetchedQuestions, index, e.target.value, true)} />
                                             </div>
                                         </div>
                                         <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
                                             {question.options.map((option, optionIndex) => (
-                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(index, option)}>
-                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} defaultValue={option} className='outline-none text-xl text-white' required />
+                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(fetchedQuestions, index, option)}>
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} defaultValue={option} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(fetchedQuestions, index, optionIndex, e.target.value, true)} />
                                                 </div>
                                             ))}
                                         </div>
                                         <div className='flex justify-end mr-5'>
-                                            <button className='text-red-600 hover:text-red-700 cursor-pointer underline text-base py-2' >
+                                            <button className='text-red-600 hover:text-red-700 cursor-pointer underline text-base py-2' onClick={() => deleteQuestion(question.id)}>
                                                 Remove
                                             </button>
                                         </div>
@@ -215,17 +264,17 @@ const EditPage = () => {
                                         <div className='flex justify-between'>
                                             <div>
                                                 <span className='text-xl text-white mr-2'>{(fetchedQuestions.length) + index + 1}.</span>
-                                                <input name='question' type='text' placeholder='Enter question' className='text-xl text-white' required onChange={(e) => handleQuestionChange(index, e.target.value)} />
+                                                <input name='question' type='text' placeholder='Enter question' className='text-xl text-white' required onChange={(e) => handleQuestionChange(questions, index, e.target.value)} />
                                             </div>
                                             <div>
                                                 <span className='text-xl text-gray-300 mr-2'>marks :</span>
-                                                <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(index, e.target.value)} />
+                                                <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(questions, index, e.target.value)} />
                                             </div>
                                         </div>
                                         <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
                                             {question.options.map((option, optionIndex) => (
-                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(index, option)}>
-                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)} />
+                                                <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(questions, index, option)}>
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(questions, index, optionIndex, e.target.value)} />
                                                 </div>
                                             ))}
                                         </div>
@@ -247,7 +296,7 @@ const EditPage = () => {
                             <AddIcon fontSize='medium' />
                             Add
                         </button>
-                        <button className='text-white text-xl p-2 bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-lg flex items-center' onClick={() => handleSubmit()}>
+                        <button className='text-white text-xl p-2 bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-lg flex items-center' onClick={() => { handleSubmit(questions); handleSubmit(fetchedQuestions, true) }}>
                             <SaveIcon fontSize='medium' />
                             Save
                         </button>

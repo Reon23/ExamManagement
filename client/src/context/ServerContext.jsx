@@ -113,28 +113,69 @@ export const ServerProvider = ({ children }) => {
         axios.post('http://localhost:5001/api/question', question_json)
         .then(res => {
             console.log(res.data);
+            fetchQuestionsFromDatabase(qbid);
         })
         .catch(err => {
             console.error(err);
         })
+    }
+    
+    const updateQuestionOnDatabase = async (qbid, qid, question, option1, option2, option3, option4, answer, marks) => {
+        const question_json = {
+            questionBankId: qbid,
+            question_id: qid,
+            question: question,
+            option1: option1,
+            option2: option2,
+            option3: option3,
+            option4: option4,
+            answer: answer,
+            marks: marks,
+        }
+        axios.put('http://localhost:5001/api/question', question_json)
+        .then(res => {
+            console.log(res.data);
+            fetchQuestionsFromDatabase(qbid);
+        })
+        .catch(err => {
+            console.error(err);
+        })
+    }
+
+    const deleteQuestionOnDatabase = async (qbid, qid) => {
+        const question_json = {
+            questionBankId: qbid,
+            question_id: qid
+        }
+        axios.delete('http://localhost:5001/api/question', {
+            data: question_json
+        })
+            .then(res => {
+                console.log(res.data);
+                fetchQuestionsFromDatabase(qbid);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
     const fetchQuestionsFromDatabase = async (qbid) => {
         setFetchedQuestions([]);
         axios.get(`http://localhost:5001/api/question/${qbid}`)
-        .then(res => {
-            console.log(res.data);
-            const data = res.data.data;
-            structureQuestionData(data);
-        })
-        .catch(err => {
-            console.error(err);
-        })
+            .then(res => {
+                console.log(res.data);
+                const data = res.data.data;
+                structureQuestionData(data);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
+
 
     const structureQuestionData = (data) => {
         const structuredData = [];
-        for(let i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             structuredData.push({
                 id: data[i].qid,
                 question: data[i].question,
@@ -157,6 +198,9 @@ export const ServerProvider = ({ children }) => {
                 role,
                 buffer,
                 fetchedQuestions,
+                updateQuestionOnDatabase,
+                deleteQuestionOnDatabase,
+                setFetchedQuestions,
                 fetchQuestionsFromDatabase,
                 addQuestionToDatabase,
                 setBuffer,

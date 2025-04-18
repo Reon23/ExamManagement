@@ -93,10 +93,10 @@ export const fetchQuestions = async (req, res) => {
 }
 
 export const updateQuestion = async (req, res) => {
-    const { questionBankId, question_no, question, option1, option2, option3, answer, marks } = req.body;
+    const { questionBankId, question_id, question, option1, option2, option3, option4, answer, marks } = req.body;
 
     try {
-        const question_result = await updateQuestionService( questionBankId, question_no, question, option1, option2, option3, answer, marks );
+        const question_result = await updateQuestionService( questionBankId, question_id, question, option1, option2, option3, option4, answer, marks );
         handleResponse(res, 200, "Question updated sucessfully", question_result)
     }
     catch (err) {
@@ -105,14 +105,14 @@ export const updateQuestion = async (req, res) => {
 }
 
 export const deleteQuestion = async (req, res) => {
-    const { questionBankId, question_no } = req.body;
+    const { questionBankId, question_id } = req.body;
     try {
-        const question = await deleteQuestionService( questionBankId, question_no)
+        const question = await deleteQuestionService( questionBankId, question_id)
         if (!question || question.length === 0) return handleResponse(res, 404, "Question not found");
         handleResponse(res, 200, "Question removed sucessfully", question)
     }
     catch (err) {
-        console.error("Error adding question:", err);
+        console.error("Error deleting question:", err);
         handleResponse(res, 500, "Failed to remove question")
     }
 }

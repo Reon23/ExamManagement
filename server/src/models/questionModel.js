@@ -48,18 +48,18 @@ export const fetchQuestionsService = async (questionBankId) => {
     return result.rows;
 }
 
-export const updateQuestionService = async (questionBankId, question_no, question, option1, option2, option3, answer, marks) => {
+export const updateQuestionService = async (questionBankId, question_id, question, option1, option2, option3, option4, answer, marks) => {
     const result = await pool.query(
-        "UPDATE question set question = $1, option1 = $2, option2 = $3, option3 = $4, answer = $5, marks = $6 WHERE id = $7 AND question_no = $8 RETURNING *",
-        [question, option1, option2, option3, answer, marks, questionBankId, question_no]
+        "UPDATE question SET question = $1, option1 = $2, option2 = $3, option3 = $4, option4 = $5, answer = $6, marks = $7 WHERE qbid = $8 AND qid = $9 RETURNING *",
+        [question, option1, option2, option3, option4, answer, marks, questionBankId, question_id]
     );
     return result.rows[0];
 }
 
-export const deleteQuestionService = async (questionBankId, question_no) => {
+export const deleteQuestionService = async (questionBankId, question_id) => {
     const result = await pool.query(
-        'DELETE FROM question WHERE question_no = $1 AND id = $2 RETURNING *',
-        [question_no, questionBankId]
+        'DELETE FROM question WHERE qid = $1 AND qbid = $2 RETURNING *',
+        [question_id, questionBankId]
     );
     return result.rows[0];
 }
