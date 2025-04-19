@@ -87,10 +87,28 @@ export const ServerProvider = ({ children }) => {
         const question_bank = {
             subject: subject,
             owner_id: account.id
-        }
+        };
         axios.post('http://localhost:5001/api/question_bank', question_bank)
         .then(res => {
             console.log(res.data);
+            fetchInstructorBanks();
+        })
+        .catch(err => {
+            console.error(err);
+        })
+    }
+
+    //Delete Question Bank
+    const deleteQuestionBank = async (qbid) => {
+        const question_bank = {
+            owner_id: account.id,
+        };
+        axios.delete(`http://localhost:5001/api/question_bank/${qbid}`, {
+            data: question_bank
+        })
+        .then(res => {
+            console.log(res.data);
+            fetchInstructorBanks();
         })
         .catch(err => {
             console.error(err);
@@ -198,6 +216,7 @@ export const ServerProvider = ({ children }) => {
                 role,
                 buffer,
                 fetchedQuestions,
+                deleteQuestionBank,
                 updateQuestionOnDatabase,
                 deleteQuestionOnDatabase,
                 setFetchedQuestions,

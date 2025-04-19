@@ -308,7 +308,34 @@ const EditPage = () => {
                     <hr className='border-gray-600 border-[0.5] w-10/12 my-5' />
                     <div className='w-10/12'>
                         <h1 className='text-white text-lg'>Questions : {fetchedQuestions.length + questions.length}</h1>
-                        <h1 className='text-white text-lg'>Marks : {totalMarks}</h1>
+                        <h1 className='text-white text-lg'>Total Marks : {totalMarks}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const DeletePrompt = () => {
+    const { buffer, deleteQuestionBank } = useContext(ServerContext);
+    const navigate = useNavigate();
+
+    const handleDelete = () => {
+        deleteQuestionBank(buffer.id);
+        handleNavigation(navigate, "question_bank/");
+    }
+
+    return (
+        <div>
+            <div className='fixed left-0 top-0 w-screen h-screen bg-black opacity-50'/>
+            <div className='absolute z-50 w-screen h-screen top-0 left-0 scale-up-center-normal'>
+                <div className='flex flex-col w-full h-full justify-center items-center'>
+                    <div className=' w-3/10 mx-auto relative my-10 bg-gray-900 rounded-lg flex flex-col items-center'>
+                        <h1 className='text-3xl font-bold text-center pt-12 text-white'>Delete {buffer.subject} ?</h1>
+                        <div className='flex gap-2 w-8/10 mt-5 justify-end'>
+                        <button className='p-2 mt-2 mb-5 border-gray-300 hover:border-white border-1 text-white rounded-md cursor-pointer' onClick={() => handleNavigation(navigate, "question_bank/")}>Cancel</button>
+                        <button className='p-2 mt-2 mb-5 bg-red-500 hover:bg-red-700 text-white rounded-md cursor-pointer' onClick={handleDelete}>Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -317,7 +344,9 @@ const EditPage = () => {
 }
 
 const QuestionBankPage = () => {
-    const { setBuffer, banksAvail, questionBanks, fetchInstructorBanks } = useContext(ServerContext);
+    const { setBuffer, banksAvail, questionBanks, fetchInstructorBanks} = useContext(ServerContext);
+    const [ recentBanks , setRecentBanks ] = useState([]);
+    const recentCount = 5;
     const navigate = useNavigate();
 
     const handleClick = (id, subject) => {
@@ -329,12 +358,24 @@ const QuestionBankPage = () => {
         handleNavigation(navigate, "question_bank/edit")
     }
 
+    const handleDelete = (id, subject) => {
+        const data = {
+            id: id,
+            subject: subject
+        }
+        setBuffer(data);
+        handleNavigation(navigate, "question_bank/delete")
+    }
+
     useEffect(() => {
         fetchInstructorBanks();
     }, []);
 
     useEffect(() => {
-        if (banksAvail) console.log(questionBanks);
+        if (banksAvail){
+            setRecentBanks(questionBanks.slice(0, recentCount));
+            console.log(recentBanks);
+        }
     }, [banksAvail]);
 
     return (
@@ -349,8 +390,8 @@ const QuestionBankPage = () => {
             <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Recent Banks</h1>
             {banksAvail ? (
                 <>
-                    <div className='bg-gray-900 ml-[8rem] mr-[2rem] h-[38vh] mb-5 px-4 py-2 rounded-md shadow-lg'>
-                        {questionBanks.map((item, key) => (
+                    <div className='bg-gray-900 ml-[8rem] mr-[2rem] h-[40vh] mb-5 px-4 py-2 rounded-md shadow-lg overflow-y-auto'>
+                        {recentBanks.map((item, key) => (
                             <div key={key}>
                                 <div className='bg-gray-700 p-3 mt-2 rounded-lg flex justify-between items-center shadow-xl scale-up-center-normal'>
                                     <div className='flex items-center'>
@@ -362,7 +403,7 @@ const QuestionBankPage = () => {
                                         <button className='bg-green-500 hover:bg-green-600 p-2 rounded-lg cursor-pointer mr-2' onClick={() => handleClick(item.id, item.subject)}>
                                             <EditIcon fontSize='medium' sx={{ color: 'white' }} />
                                         </button>
-                                        <button className='bg-red-500 hover:bg-red-600 p-2 rounded-lg cursor-pointer mr-2'>
+                                        <button className='bg-red-500 hover:bg-red-600 p-2 rounded-lg cursor-pointer mr-2' onClick={() => handleDelete(item.id, item.subject)}>
                                             <DeleteIcon fontSize='medium' sx={{ color: 'white' }} />
                                         </button>
                                     </div>
@@ -391,7 +432,14 @@ const QuestionBank = () => {
                 <>
                     <QuestionBankPage />
                     <CreatePanel />
-                </>} />
+                </>
+            } />
+            <Route path="delete" element={
+                <>
+                    <QuestionBankPage />
+                    <DeletePrompt />
+                </>
+            } />
             <Route path="edit" element={<EditPage />} />
         </Routes>
     )
