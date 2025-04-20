@@ -199,18 +199,18 @@ const ExamPage = () => {
     }
 
     return (
-        <div className='fixed left-[5.5rem] w-full h-screen bg-gray-800'>
-            <h1 className='text-3xl font-bold p-10 text-gray-300'>Exams</h1>
-            <div className='flex flex-row gap-4 w-full mx-10'>
+        <div className='fixed left-0 w-full h-screen bg-gray-800 overflow-y-auto overflow-x-hidden'>
+            <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Exams</h1>
+            <div className='flex flex-row gap-4 w-full mx-10 ml-[8rem]'>
                 <div onClick={() => handleNavigation(navigate, "exam/create")}>
                     <Card title={"Create Exam"} img={CreateExam} />
                 </div>
                 <Card title={"Manage Exams"} img={ManageExam} />
             </div>
-            <h1 className='text-3xl font-bold p-10 text-gray-300'>Recent Exams</h1>
-            {exams ? (
+            <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Recent Exams</h1>
+            {exams.length !== 0 ? (
                 <>
-                    <div className='bg-gray-900 ml-[2rem] mr-[8rem] h-[40vh] mb-5 px-4 py-2 rounded-md shadow-lg overflow-y-auto'>
+                    <div className='bg-gray-900 ml-[8rem] mr-[2rem] h-[40vh] mb-5 px-4 py-2 rounded-md shadow-lg overflow-y-auto'>
                         {recentExams.map((item, key) => (
                             <div key={key}>
                                 <div className='bg-gray-700 p-3 mt-2 rounded-lg flex justify-between items-center shadow-xl scale-up-center-normal'>
@@ -229,10 +229,10 @@ const ExamPage = () => {
                     </div>
                 </>
             ) : (
-                <div className='bg-gray-900 ml-[8rem] mr-[2rem] rounded-md'>
-                    <div className='flex flex-col p-5 w-full justify-center items-center'>
+                <div className='bg-gray-900 ml-[8rem] h-[35vh] mr-[2rem] mb-4 rounded-md'>
+                    <div className='flex flex-col p-5 w-full h-full justify-center items-center'>
                         <img src={EmptyBox} className='w-[10rem] opacity-45 grayscale' />
-                        <span className='text-xl text-gray-400 w-1/10 text-center'>Recent banks will appear here!</span>
+                        <span className='text-xl text-gray-400 w-1/10 text-center'>Recent exams will appear here!</span>
                     </div>
                 </div>
             )}

@@ -331,8 +331,8 @@ const DeletePrompt = () => {
             <div className='absolute z-50 w-screen h-screen top-0 left-0 scale-up-center-normal'>
                 <div className='flex flex-col w-full h-full justify-center items-center'>
                     <div className=' w-3/10 mx-auto relative my-10 bg-gray-900 rounded-lg flex flex-col items-center'>
-                        <h1 className='text-3xl font-bold text-center pt-12 text-white'>Delete {buffer.subject} ?</h1>
-                        <div className='flex gap-2 w-8/10 mt-5 justify-end'>
+                        <h1 className='text-3xl font-bold text-center pt-12 text-white text-wrap w-8/10'>Delete {buffer.subject} ?</h1>
+                        <div className='flex gap-2 w-9/10 mt-5 justify-end'>
                         <button className='p-2 mt-2 mb-5 border-gray-300 hover:border-white border-1 text-white rounded-md cursor-pointer' onClick={() => handleNavigation(navigate, "question_bank/")}>Cancel</button>
                         <button className='p-2 mt-2 mb-5 bg-red-500 hover:bg-red-700 text-white rounded-md cursor-pointer' onClick={handleDelete}>Delete</button>
                         </div>

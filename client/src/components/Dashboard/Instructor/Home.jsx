@@ -34,9 +34,9 @@ const Card = ({ title, caption, img, redirect }) => {
 const Home = () => {
     const { account } = useContext(ServerContext);
     return (
-        <div className='fixed left-[5.5rem] w-full h-screen bg-gray-800'>
-            <h1 className='text-3xl font-bold p-10 text-gray-300'>Welcome <span>{account.name || "User"}</span></h1>
-            <div className='flex flex-row gap-4 w-full mx-10'>
+        <div className='fixed left-0 w-full h-screen bg-gray-800 overflow-y-auto overflow-x-hidden'>
+            <h1 className='text-3xl font-bold p-10 ml-20 text-gray-300'>Welcome <span>{account.name || "User"}</span></h1>
+            <div className='flex flex-row gap-4 w-full ml-[8rem] mx-10'>
                 <Card title={"Question Banks"} caption={"Create and manage question banks"} img={QuestionBankImg} redirect={"question_bank"}/>
                 <Card title={"Exams"} caption={"Create and manage exams"} img={ExamImg} redirect={"exam"}/>
             </div>
