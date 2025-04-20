@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS exam (
     id SERIAL PRIMARY KEY,
     qid INTEGER NOT NULL,
     iid INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
     total_marks INTEGER NOT NULL,
     FOREIGN KEY(qid) REFERENCES question_bank(id),
     FOREIGN KEY(iid) REFERENCES instructor(id)

@@ -81,6 +81,34 @@ export const ServerProvider = ({ children }) => {
             console.error(err);
         });
     }
+    
+    // Fetch All Banks
+    const fetchAllBanks = async () => {
+        setBanksAvail(false);
+        axios.get(`http://localhost:5001/api/question_bank`)
+        .then(res => {
+            console.log(res.data);
+            setQuestionBanks(res.data.data)
+            setBanksAvail(true);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+
+    const searchForBanks = async (query) => {
+        setBanksAvail(false);
+        axios.get(`http://localhost:5001/api/question_bank_search?query=${encodeURIComponent(query)}`)
+        .then(res => {
+            console.log(res.data);
+            setQuestionBanks(res.data.data)
+            setBanksAvail(true);
+        })
+        .catch(err => {
+            console.error(err);
+            setQuestionBanks([]);
+        });
+    }
 
     // Create Question Bank
     const createQuestionBank = async (subject) => {
@@ -232,6 +260,8 @@ export const ServerProvider = ({ children }) => {
                 registerStudent,
                 loginUser,
                 fetchInstructorBanks,
+                fetchAllBanks,
+                searchForBanks,
             }}>
             {children}
         </ServerContext.Provider>

@@ -16,7 +16,7 @@ const Instructor = () => {
                 <Routes>
                     <Route path='' element={<Home />}/>
                     <Route path='question_bank/*' element={<QuestionBank />} />
-                    <Route path='exam' element={<Exam />} />
+                    <Route path='exam/*' element={<Exam />} />
                 </Routes>
                 <SidePanel />
             </div>

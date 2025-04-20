@@ -32,6 +32,14 @@ export const getQuestionBankByIdService = async (owner_id) => {
     return result.rows;
 }
 
+export const searchQuestionBankService = async (query) => {
+    const result = await pool.query(
+        "SELECT * FROM question_bank WHERE subject ILIKE $1",
+        [`%${query}%`]
+    );
+    return result.rows;
+};
+
 export const addQuestionService = async (questionBankId, question_id, question, option1, option2, option3, option4, answer, marks) => {
     const result = await pool.query(
         "INSERT INTO question (qbid, qid, question, option1, option2, option3, option4, answer, marks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",

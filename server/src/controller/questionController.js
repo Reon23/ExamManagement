@@ -6,6 +6,7 @@ import {
     fetchQuestionsService, 
     getAllQuestionBanksService, 
     getQuestionBankByIdService, 
+    searchQuestionBankService, 
     updateQuestionService
 } from "../models/questionModel.js";
 
@@ -57,6 +58,19 @@ export const deleteQuestionBank = async (req, res) => {
 export const getQuestionBankById = async (req, res) => {
     try {
         const question_banks = await getQuestionBankByIdService(req.params.id)
+        if (!question_banks || question_banks.length === 0) return handleResponse(res, 404, "Question Banks not found");
+        handleResponse(res, 200, "Question Banks fetched sucessfully", question_banks)
+    }
+    catch (err) {
+        console.error("Error fetching question bank:", err);
+        handleResponse(res, 500, "Failed to fetch question banks")
+    }
+}
+
+export const searchQuestionBank = async (req, res) => {
+    const query = req.query.query;
+    try {
+        const question_banks = await searchQuestionBankService(query);
         if (!question_banks || question_banks.length === 0) return handleResponse(res, 404, "Question Banks not found");
         handleResponse(res, 200, "Question Banks fetched sucessfully", question_banks)
     }

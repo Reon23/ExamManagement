@@ -7,6 +7,7 @@ import {
     fetchQuestions, 
     getQuestionBankById, 
     getQuestionBanks, 
+    searchQuestionBank, 
     updateQuestion 
 } from "../controller/questionController.js";
 
@@ -15,6 +16,7 @@ const router = express.Router();
 // Question bank routes
 router.post('/question_bank', createQuestionBank)
 router.get('/question_bank', getQuestionBanks)
+router.get('/question_bank_search', searchQuestionBank)
 router.delete('/question_bank/:id', deleteQuestionBank)
 router.get('/question_bank/:id', getQuestionBankById)
 
