@@ -11,12 +11,13 @@ export const ServerProvider = ({ children }) => {
     const [buffer, setBuffer] = useState("");
     const [ fetchedQuestions, setFetchedQuestions ] = useState([]);
     const [questionBanks, setQuestionBanks] = useState([]);
+    const [bankDetails, setBankDetails] = useState([]);
     const [banksAvail, setBanksAvail] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
 
     // Register methods
     const registerInstructor = async (role, name, email, password) => {
-        instructor = {
+        const instructor = {
             role: role,
             name: name,
             email: email,
@@ -24,8 +25,8 @@ export const ServerProvider = ({ children }) => {
         }
         axios.post('http://localhost:5001/api/auth/register', instructor)
         .then(res => {
-            console.log(res.data);
-            setAccount(res.data);
+            console.log(res.data.user);
+            setAccount(res.data.user);
         })
         .catch(err => {
             console.error(err)
@@ -33,7 +34,8 @@ export const ServerProvider = ({ children }) => {
     }
 
     const registerStudent = async (role, firstName, lastName, email, password) => {
-        student = {
+        setRegisterSucess(false);
+        const student = {
             role: role,
             first_name: firstName,
             last_name: lastName,
@@ -42,8 +44,8 @@ export const ServerProvider = ({ children }) => {
         }
         axios.post('http://localhost:5001/api/auth/register', student)
         .then(res => {
-            console.log(res.data);
-            setAccount(res.data);
+            console.log(res.data.user);
+            setAccount(res.data.user);
         })
         .catch(err => console.error(err));
     }
@@ -107,6 +109,18 @@ export const ServerProvider = ({ children }) => {
         .catch(err => {
             console.error(err);
             setQuestionBanks([]);
+        });
+    }
+
+    const getBankDetails = async(qbid) => {
+        setBankDetails([]);
+        axios.get(`http://localhost:5001/api/question_bank_details/${qbid}`)
+        .then(res => {
+            setBankDetails(res.data.data);
+            console.log(res.data);
+        })
+        .catch(err => {
+            console.error(err);
         });
     }
 
@@ -244,6 +258,7 @@ export const ServerProvider = ({ children }) => {
                 role,
                 buffer,
                 fetchedQuestions,
+                bankDetails,
                 deleteQuestionBank,
                 updateQuestionOnDatabase,
                 deleteQuestionOnDatabase,
@@ -262,6 +277,8 @@ export const ServerProvider = ({ children }) => {
                 fetchInstructorBanks,
                 fetchAllBanks,
                 searchForBanks,
+                getBankDetails,
+                setBankDetails,
             }}>
             {children}
         </ServerContext.Provider>

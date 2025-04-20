@@ -6,6 +6,8 @@ import {
     fetchQuestionsService, 
     getAllQuestionBanksService, 
     getQuestionBankByIdService, 
+    getQuestionCount, 
+    getTotalMarks, 
     searchQuestionBankService, 
     updateQuestionService
 } from "../models/questionModel.js";
@@ -77,6 +79,21 @@ export const searchQuestionBank = async (req, res) => {
     catch (err) {
         console.error("Error fetching question bank:", err);
         handleResponse(res, 500, "Failed to fetch question banks")
+    }
+}
+
+export const getQuestionBankDetails = async (req, res) => {
+    try {
+        const marks = await getTotalMarks(req.params.id);
+        const count = await getQuestionCount(req.params.id);
+        const details = {
+            total_marks : marks.total_marks,
+            questions : count.questions
+        }
+        handleResponse(res, 200, "Details fetched", details);
+    } catch (err) {
+        console.error("Error fetching details", err);
+        handleResponse(res, 500, "Failed to fetch details");
     }
 }
 

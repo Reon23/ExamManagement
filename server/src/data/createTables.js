@@ -113,7 +113,7 @@ export const createExamTable = async () => {
         iid INTEGER NOT NULL,
         title VARCHAR(255) NOT NULL,
         total_marks INTEGER NOT NULL,
-        FOREIGN KEY(qid) REFERENCES question_bank(id),
+        FOREIGN KEY(qid) REFERENCES question_bank(id) ON DELETE CASCADE,
         FOREIGN KEY(iid) REFERENCES instructor(id)
     );
     `;
@@ -137,8 +137,8 @@ export const createResultTable = async () => {
         final_marks INTEGER NOT NULL,
         total_marks INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
-        FOREIGN KEY(eid) REFERENCES exam(id),
-        FOREIGN KEY(sid) REFERENCES student(id),
+        FOREIGN KEY(eid) REFERENCES exam(id) ON DELETE CASCADE,
+        FOREIGN KEY(sid) REFERENCES student(id) ON DELETE CASCADE,
         FOREIGN KEY(iid) REFERENCES instructor(id)
     );
     `;

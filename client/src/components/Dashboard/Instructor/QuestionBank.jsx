@@ -232,9 +232,9 @@ const EditPage = () => {
                                 {fetchedQuestions.map((question, index) => (
                                     <div key={question.id} className='mt-4'>
                                         <div className='flex justify-between'>
-                                            <div>
+                                            <div className='w-9/12 flex items-center'>
                                                 <span className='text-xl text-white mr-2'>{index + 1}.</span>
-                                                <input name='question' type='text' placeholder='Enter question' defaultValue={question.question} className='text-xl text-white' required onChange={(e) => handleQuestionChange(fetchedQuestions, index, e.target.value, true)} />
+                                                <input name='question' type='text' placeholder='Enter question' defaultValue={question.question} className='text-xl w-full text-white' required onChange={(e) => handleQuestionChange(fetchedQuestions, index, e.target.value, true)} />
                                             </div>
                                             <div>
                                                 <span className='text-xl text-gray-300 mr-2'>marks :</span>
@@ -244,7 +244,7 @@ const EditPage = () => {
                                         <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
                                             {question.options.map((option, optionIndex) => (
                                                 <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(fetchedQuestions, index, option)}>
-                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} defaultValue={option} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(fetchedQuestions, index, optionIndex, e.target.value, true)} />
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} defaultValue={option} className='outline-none w-11/12 text-xl text-white' required onChange={(e) => handleOptionChange(fetchedQuestions, index, optionIndex, e.target.value, true)} />
                                                 </div>
                                             ))}
                                         </div>
@@ -261,12 +261,12 @@ const EditPage = () => {
                             <>
                                 {questions.map((question, index) => (
                                     <div key={question.id} className='mt-4'>
-                                        <div className='flex justify-between'>
-                                            <div>
+                                        <div className='flex items-center justify-between'>
+                                            <div className='w-9/12 flex items-center'>
                                                 <span className='text-xl text-white mr-2'>{(fetchedQuestions.length) + index + 1}.</span>
-                                                <input name='question' type='text' placeholder='Enter question' className='text-xl text-white' required onChange={(e) => handleQuestionChange(questions, index, e.target.value)} />
+                                                <input name='question' type='text' placeholder='Enter question' className='text-xl w-full text-white' required onChange={(e) => handleQuestionChange(questions, index, e.target.value)} />
                                             </div>
-                                            <div>
+                                            <div className='flex items-center'>
                                                 <span className='text-xl text-gray-300 mr-2'>marks :</span>
                                                 <input name='marks' type='number' className='text-xl text-white w-20 mr-6 text-right' required onChange={(e) => handleMarksChange(questions, index, e.target.value)} />
                                             </div>
@@ -274,7 +274,7 @@ const EditPage = () => {
                                         <div className='grid grid-rows-2 grid-cols-2 gap-2 ml-5 mr-5 mt-4'>
                                             {question.options.map((option, optionIndex) => (
                                                 <div key={optionIndex} className={`p-2 border-2 ${question.answer === option && question.answer ? "border-green-500" : "border-gray-500"} rounded-md cursor-pointer`} onClick={() => handleAnswerSelect(questions, index, option)}>
-                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} className='outline-none text-xl text-white' required onChange={(e) => handleOptionChange(questions, index, optionIndex, e.target.value)} />
+                                                    <input name={'option' + optionIndex} type='text' placeholder={'option ' + (optionIndex + 1)} className='outline-none wrap-normal w-11/12 text-xl text-white' required onChange={(e) => handleOptionChange(questions, index, optionIndex, e.target.value)} />
                                                 </div>
                                             ))}
                                         </div>

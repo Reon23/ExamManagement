@@ -45,6 +45,21 @@ const Dashboard = () => {
                         )}
                     </>
                 } />
+                <Route path='student/*' element={
+                    <>
+                        {loadingDash && (
+                            <>
+                                <div className='absolute z-40 top-0 left-0 bg-black w-screen h-screen' />
+                                <div className='absolute z-50 top-0 left-0 w-full h-full flex justify-center items-center scale-up-center-normal'>
+                                    <div className='flex flex-col items-center'>
+                                        <Loader />
+                                        <span className='text-white text-xl mt-5 animate-pulse'>Loading</span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </>
+                } />
             </Routes>
         </div>
     )

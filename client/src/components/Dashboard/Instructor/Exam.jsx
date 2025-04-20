@@ -24,7 +24,7 @@ const Card = ({ title, img}) => {
 }
 
 const CreatePage = () => {
-    const { banksAvail, questionBanks, fetchInstructorBanks, fetchAllBanks, searchForBanks } = useContext(ServerContext);
+    const { buffer, setBuffer, bankDetails, setBankDetails, questionBanks, setQuestionBanks, fetchInstructorBanks, fetchAllBanks, searchForBanks, getBankDetails } = useContext(ServerContext);
     const [title, setTitle] = useState();
     const [searchQuery, setSearchQuery] = useState("");
     const [type, setType] = useState("own");
@@ -32,6 +32,8 @@ const CreatePage = () => {
 
     useEffect(() => {
         fetchInstructorBanks();
+        setBuffer([]);
+        setBankDetails([]);
     }, [])
 
     useEffect(() => {
@@ -41,6 +43,7 @@ const CreatePage = () => {
             searchForBanks(searchQuery);
         }
         else {
+            setQuestionBanks([]);
             if(type === "own")
                 fetchInstructorBanks();
             else
@@ -48,6 +51,24 @@ const CreatePage = () => {
         }
 
     }, [searchQuery, type])
+
+    const onBankSelect = (id, subject) => {
+        const data = {
+            id: id,
+            subject: subject
+        }
+
+        if (buffer.id === id)
+        {
+            setBuffer([]);
+            setBankDetails([]);
+        }
+        else
+        {
+            setBuffer(data);
+            getBankDetails(id);
+        }
+    }
 
     return(
         <div className='fixed left-[5.5rem] w-full h-screen bg-gray-800'>
@@ -58,7 +79,7 @@ const CreatePage = () => {
                         <div className='flex items-center justify-between my-2'>
                             <h1 className='text-3xl font-bold text-gray-400 mb-4'>Exam Details</h1>
                             <div className='flex gap-2 mr-5'>
-                                <button className='text-gray-300 hover:text-white border-gray-300 hover:border-white border-[1px] p-2 rounded-md cursor-pointer' onClick={() => handleNavigation(navigate, "exam")}>
+                                <button className='text-gray-300 hover:text-white border-gray-300 hover:border-white border-[1px] p-2 rounded-md cursor-pointer' onClick={() => {setBuffer([]); setBankDetails([]); handleNavigation(navigate, "exam")}}>
                                     Back
                                 </button>
                                 <button className='text-green-600 hover:text-green-700 bg-border-600 hover:border-green-700 border-[1px] p-2 rounded-md cursor-pointer'>
@@ -73,15 +94,15 @@ const CreatePage = () => {
                             </label>
                             <label className='text-gray-300 text-xl block'>
                                 Bank Name :
-                                <input name='name' type='text' className='bg-gray-800 p-2 ml-4 text-white rounded-lg' disabled />
+                                <input name='name' type='text' className='bg-gray-800 p-2 ml-4 text-white rounded-lg' defaultValue={buffer.subject} disabled />
                             </label>
                             <label className='text-gray-300 text-xl block'>
                                 Total Marks :
-                                <input name='name' type='text' className='bg-gray-800 p-2 ml-4 text-white rounded-lg' disabled />
+                                <input name='name' type='text' className='bg-gray-800 p-2 ml-4 text-white rounded-lg' defaultValue={bankDetails.total_marks} disabled />
                             </label>
                             <label className='text-gray-300 text-xl block'>
                                 Questions :
-                                <input name='name' type='text' className='bg-gray-800 p-2 ml-7 text-white rounded-lg' disabled />
+                                <input name='name' type='text' className='bg-gray-800 p-2 ml-7 text-white rounded-lg' defaultValue={bankDetails.questions} disabled />
                             </label>
                         </div>
                         <h1 className='text-3xl font-bold text-gray-400 mt-10 mb-4'>Question Bank</h1>
@@ -116,7 +137,7 @@ const CreatePage = () => {
                                                         <button className='bg-blue-500 hover:bg-blue-600 p-2 rounded-md cursor-pointer'>
                                                             <VisibilityIcon fontSize='medium' sx={{ color: 'white' }} />
                                                         </button>
-                                                        <button className='bg-gray-500 hover:bg-gray-600 p-2 rounded-md cursor-pointer'>
+                                                        <button className={`${item.id === buffer.id ? "bg-green-500 hover:bg-green-600": "bg-gray-500 hover:bg-gray-600"} p-2 rounded-md cursor-pointer`} onClick={() => onBankSelect(item.id, item.subject)}>
                                                             <CheckIcon fontSize='medium' sx={{ color: 'white' }} />
                                                         </button>
                                                     </div>

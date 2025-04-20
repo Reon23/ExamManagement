@@ -40,6 +40,22 @@ export const searchQuestionBankService = async (query) => {
     return result.rows;
 };
 
+export const getQuestionCount = async (qbid) => {
+    const result = await pool.query(
+        "SELECT COUNT(qid) AS questions FROM question WHERE qbid = $1",
+        [qbid]
+    );
+    return result.rows[0];
+};
+
+export const getTotalMarks = async (qbid) => {
+    const result = await pool.query(
+        "SELECT SUM(marks) AS total_marks FROM question WHERE qbid = $1",
+        [qbid]
+    );
+    return result.rows[0];
+};
+
 export const addQuestionService = async (questionBankId, question_id, question, option1, option2, option3, option4, answer, marks) => {
     const result = await pool.query(
         "INSERT INTO question (qbid, qid, question, option1, option2, option3, option4, answer, marks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",

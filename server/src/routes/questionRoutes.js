@@ -6,6 +6,7 @@ import {
     deleteQuestionBank, 
     fetchQuestions, 
     getQuestionBankById, 
+    getQuestionBankDetails, 
     getQuestionBanks, 
     searchQuestionBank, 
     updateQuestion 
@@ -19,6 +20,7 @@ router.get('/question_bank', getQuestionBanks)
 router.get('/question_bank_search', searchQuestionBank)
 router.delete('/question_bank/:id', deleteQuestionBank)
 router.get('/question_bank/:id', getQuestionBankById)
+router.get('/question_bank_details/:id', getQuestionBankDetails)
 
 // Question routes
 router.post('/question', addQuestion)

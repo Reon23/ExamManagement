@@ -86,7 +86,54 @@ const LoginPanel = () => {
 }
 
 const RegisterPanel = () => {
-    const { role, setRole } = useContext(ServerContext);
+    const { role, setRole, account, registerInstructor, registerStudent } = useContext(ServerContext);
+    const [userName, setUserName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [credentialsInvalid, setCredentialsInvalid] = useState(false);
+    const navigate = useNavigate();
+
+
+    // Handle Submit
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            Register();
+        }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    });
+
+    // Handle Register
+    const Register = () => {
+        setCredentialsInvalid(false);
+        if (role === "instructor") {
+            if (userName && email && password) {
+                registerInstructor(role, userName, email, password);
+            }
+            else {
+                setCredentialsInvalid(true);
+            }
+        }
+        else {
+            if (firstName && email && password) {
+                registerStudent(role, firstName, lastName, email, password);
+            }
+            else {
+                setCredentialsInvalid(true);
+            }
+        }
+    }
+    
+    useEffect(() => {
+        if(account) navigate(`/Dashboard/${role}`);
+    },[account])
+    
     return (
         <>
             <div className='w-full items-center flex flex-col justify-center scale-up-center-normal'>
@@ -96,27 +143,27 @@ const RegisterPanel = () => {
                 {role === 'instructor' ? (
                     <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-5 rounded-md scale-up-center-normal'>
                         <PersonIcon fontSize='large' />
-                        <input name='userName' type='text' placeholder='User Name' className='w-full text-2xl pl-2 outline-none' />
+                        <input name='userName' type='text' placeholder='User Name' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setUserName(e.target.value)} />
                     </div>
                 ) : (
                     <>
                         <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-5 rounded-md slide-top-normal'>
                             <PersonIcon fontSize='large' />
-                            <input name='firstName' type='text' placeholder='First Name' className='w-full text-2xl pl-2 outline-none' />
+                            <input name='firstName' type='text' placeholder='First Name' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setFirstName(e.target.value)} />
                         </div>
                         <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-10 rounded-md slide-top-normal'>
                             <PersonIcon fontSize='large' />
-                            <input name='lastName' type='text' placeholder='Last Name (optional)' className='w-full text-2xl pl-2 outline-none' />
+                            <input name='lastName' type='text' placeholder='Last Name (optional)' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setLastName(e.target.value)} />
                         </div>
                     </>
                 )}
                 <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-10 rounded-md scale-up-center-normal'>
                     <AlternateEmailIcon fontSize='large' />
-                    <input name='email' type='email' placeholder='Email' className='w-full text-2xl pl-2 outline-none' />
+                    <input name='email' type='email' placeholder='Email' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className='flex items-center bg-gray-200 p-3 w-6/10 mt-10 rounded-md scale-up-center-normal'>
                     <LockIcon fontSize='large' />
-                    <input name='password' type='password' placeholder='Password' className='w-full text-2xl pl-2 outline-none' />
+                    <input name='password' type='password' placeholder='Password' className='w-full text-2xl pl-2 outline-none' onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <div className='flex items-center mt-5 select-none'>
                     <label className={`text-xl p-2 cursor-pointer ${role === 'instructor' ? "border-blue-400 border-2 rounded-full" : "border-gray-300 border-2 rounded-full"}`}>
@@ -130,9 +177,14 @@ const RegisterPanel = () => {
                         <span className='pl-2'>student</span>
                     </label>
                 </div>
-                <button className='text-2xl w-6/10 font-bold text-white p-3 mt-8 bg-blue-500 hover:bg-blue-600 rounded-md cursor-pointer'>
+                <button className='text-2xl w-6/10 font-bold text-white p-3 mt-8 bg-blue-500 hover:bg-blue-600 rounded-md cursor-pointer' onClick={Register}>
                     Register
                 </button>
+                {credentialsInvalid && (
+                    <>
+                        <span className='mt-5 text-red-500'>Check details!</span>
+                    </>
+                )}
             </div>
         </>
     )
