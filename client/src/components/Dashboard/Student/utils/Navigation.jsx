@@ -1,4 +1,4 @@
 
 export const handleNavigation = (navigate, path) => {
-    navigate(`/Dashboard/instructor/${path}`);
+    navigate(`/Dashboard/student/${path}`);
 }

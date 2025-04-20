@@ -3,6 +3,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { ServerContext } from '../context/ServerContext'
 import Instructor from './Dashboard/Instructor';
 import Loader from './Loader';
+import Student from './Dashboard/Student';
 
 const Dashboard = () => {
     const { account } = useContext(ServerContext);
@@ -47,6 +48,7 @@ const Dashboard = () => {
                 } />
                 <Route path='student/*' element={
                     <>
+                        <Student />
                         {loadingDash && (
                             <>
                                 <div className='absolute z-40 top-0 left-0 bg-black w-screen h-screen' />
