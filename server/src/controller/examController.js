@@ -19,12 +19,13 @@ const handleResponse = (res, status, message, data = null) => {
 }
 
 export const createExam = async (req, res) => {
-    const { qid, iid, total_marks } = req.body;
+    const { qid, iid, title, total_marks } = req.body;
     try {
-        const exam = await createExamService(qid, iid, total_marks);
+        const exam = await createExamService(qid, iid, title, total_marks);
         handleResponse(res, 200, "Exam created sucessfully", exam);
     }
     catch (err) {
+        console.error(err);
         handleResponse(res, 500, "Failed to create exam ")
     }
 }

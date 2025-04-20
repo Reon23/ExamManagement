@@ -9,8 +9,9 @@ export const ServerProvider = ({ children }) => {
     const [account, setAccount] = useState("");
     const [role, setRole] = useState("instructor");
     const [buffer, setBuffer] = useState("");
-    const [ fetchedQuestions, setFetchedQuestions ] = useState([]);
+    const [fetchedQuestions, setFetchedQuestions] = useState([]);
     const [questionBanks, setQuestionBanks] = useState([]);
+    const [exams, setExams] = useState([]);
     const [bankDetails, setBankDetails] = useState([]);
     const [banksAvail, setBanksAvail] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
@@ -24,13 +25,13 @@ export const ServerProvider = ({ children }) => {
             password: password
         }
         axios.post('http://localhost:5001/api/auth/register', instructor)
-        .then(res => {
-            console.log(res.data.user);
-            setAccount(res.data.user);
-        })
-        .catch(err => {
-            console.error(err)
-        });
+            .then(res => {
+                console.log(res.data.user);
+                setAccount(res.data.user);
+            })
+            .catch(err => {
+                console.error(err)
+            });
     }
 
     const registerStudent = async (role, firstName, lastName, email, password) => {
@@ -43,11 +44,11 @@ export const ServerProvider = ({ children }) => {
             password: password
         }
         axios.post('http://localhost:5001/api/auth/register', student)
-        .then(res => {
-            console.log(res.data.user);
-            setAccount(res.data.user);
-        })
-        .catch(err => console.error(err));
+            .then(res => {
+                console.log(res.data.user);
+                setAccount(res.data.user);
+            })
+            .catch(err => console.error(err));
     }
 
     // Login method
@@ -59,14 +60,14 @@ export const ServerProvider = ({ children }) => {
         }
         setLoginFailed(false);
         axios.post('http://localhost:5001/api/auth/login', user)
-        .then(res => {
-            console.log(res.data.user);
-            setAccount(res.data.user);
-        })
-        .catch(err => {
-            console.error(err);
-            setLoginFailed(true);
-        });
+            .then(res => {
+                console.log(res.data.user);
+                setAccount(res.data.user);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoginFailed(true);
+            });
     }
 
     // Question Bank Methods
@@ -74,54 +75,54 @@ export const ServerProvider = ({ children }) => {
     const fetchInstructorBanks = async () => {
         setBanksAvail(false);
         axios.get(`http://localhost:5001/api/question_bank/${account.id}`)
-        .then(res => {
-            console.log(res.data);
-            setQuestionBanks(res.data.data)
-            setBanksAvail(true);
-        })
-        .catch(err => {
-            console.error(err);
-        });
+            .then(res => {
+                console.log(res.data);
+                setQuestionBanks(res.data.data)
+                setBanksAvail(true);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
-    
+
     // Fetch All Banks
     const fetchAllBanks = async () => {
         setBanksAvail(false);
         axios.get(`http://localhost:5001/api/question_bank`)
-        .then(res => {
-            console.log(res.data);
-            setQuestionBanks(res.data.data)
-            setBanksAvail(true);
-        })
-        .catch(err => {
-            console.error(err);
-        });
+            .then(res => {
+                console.log(res.data);
+                setQuestionBanks(res.data.data)
+                setBanksAvail(true);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     const searchForBanks = async (query) => {
         setBanksAvail(false);
         axios.get(`http://localhost:5001/api/question_bank_search?query=${encodeURIComponent(query)}`)
-        .then(res => {
-            console.log(res.data);
-            setQuestionBanks(res.data.data)
-            setBanksAvail(true);
-        })
-        .catch(err => {
-            console.error(err);
-            setQuestionBanks([]);
-        });
+            .then(res => {
+                console.log(res.data);
+                setQuestionBanks(res.data.data)
+                setBanksAvail(true);
+            })
+            .catch(err => {
+                console.error(err);
+                setQuestionBanks([]);
+            });
     }
 
-    const getBankDetails = async(qbid) => {
+    const getBankDetails = async (qbid) => {
         setBankDetails([]);
         axios.get(`http://localhost:5001/api/question_bank_details/${qbid}`)
-        .then(res => {
-            setBankDetails(res.data.data);
-            console.log(res.data);
-        })
-        .catch(err => {
-            console.error(err);
-        });
+            .then(res => {
+                setBankDetails(res.data.data);
+                console.log(res.data);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     // Create Question Bank
@@ -131,13 +132,13 @@ export const ServerProvider = ({ children }) => {
             owner_id: account.id
         };
         axios.post('http://localhost:5001/api/question_bank', question_bank)
-        .then(res => {
-            console.log(res.data);
-            fetchInstructorBanks();
-        })
-        .catch(err => {
-            console.error(err);
-        })
+            .then(res => {
+                console.log(res.data);
+                fetchInstructorBanks();
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
     //Delete Question Bank
@@ -148,13 +149,13 @@ export const ServerProvider = ({ children }) => {
         axios.delete(`http://localhost:5001/api/question_bank/${qbid}`, {
             data: question_bank
         })
-        .then(res => {
-            console.log(res.data);
-            fetchInstructorBanks();
-        })
-        .catch(err => {
-            console.error(err);
-        })
+            .then(res => {
+                console.log(res.data);
+                fetchInstructorBanks();
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
     // Add Question
@@ -171,15 +172,16 @@ export const ServerProvider = ({ children }) => {
             marks: marks,
         }
         axios.post('http://localhost:5001/api/question', question_json)
-        .then(res => {
-            console.log(res.data);
-            fetchQuestionsFromDatabase(qbid);
-        })
-        .catch(err => {
-            console.error(err);
-        })
+            .then(res => {
+                console.log(res.data);
+                fetchQuestionsFromDatabase(qbid);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
-    
+
+    // Update Question
     const updateQuestionOnDatabase = async (qbid, qid, question, option1, option2, option3, option4, answer, marks) => {
         const question_json = {
             questionBankId: qbid,
@@ -193,15 +195,16 @@ export const ServerProvider = ({ children }) => {
             marks: marks,
         }
         axios.put('http://localhost:5001/api/question', question_json)
-        .then(res => {
-            console.log(res.data);
-            fetchQuestionsFromDatabase(qbid);
-        })
-        .catch(err => {
-            console.error(err);
-        })
+            .then(res => {
+                console.log(res.data);
+                fetchQuestionsFromDatabase(qbid);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
+    // Delete question
     const deleteQuestionOnDatabase = async (qbid, qid) => {
         const question_json = {
             questionBankId: qbid,
@@ -219,6 +222,7 @@ export const ServerProvider = ({ children }) => {
             })
     }
 
+    // Retrieve questions
     const fetchQuestionsFromDatabase = async (qbid) => {
         setFetchedQuestions([]);
         axios.get(`http://localhost:5001/api/question/${qbid}`)
@@ -231,7 +235,6 @@ export const ServerProvider = ({ children }) => {
                 console.error(err);
             })
     }
-
 
     const structureQuestionData = (data) => {
         const structuredData = [];
@@ -248,6 +251,37 @@ export const ServerProvider = ({ children }) => {
         setFetchedQuestions(structuredData);
     }
 
+    //Exam Methods
+    const createExam = async (qbid, title, total_marks) => {
+        const exam = {
+            qid: qbid,
+            iid: account.id,
+            title: title,
+            total_marks: total_marks
+        };
+        axios.post('http://localhost:5001/api/exam', exam)
+            .then(res => {
+                console.log(res.data);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+    //Get instructor exams
+    const fetchInstructorExams = async () => {
+        setExams([]);
+        axios.get(`http://localhost:5001/api/exam/${account.id}`)
+            .then(res => {
+                console.log(res.data);
+                setExams(res.data.data);
+            })
+            .catch(err => {
+                console.error(err);
+                setExams([]);
+            })
+    }
+
     return (
         <ServerContext.Provider value={
             {
@@ -259,6 +293,7 @@ export const ServerProvider = ({ children }) => {
                 buffer,
                 fetchedQuestions,
                 bankDetails,
+                exams,
                 deleteQuestionBank,
                 updateQuestionOnDatabase,
                 deleteQuestionOnDatabase,
@@ -279,6 +314,8 @@ export const ServerProvider = ({ children }) => {
                 searchForBanks,
                 getBankDetails,
                 setBankDetails,
+                createExam,
+                fetchInstructorExams,
             }}>
             {children}
         </ServerContext.Provider>

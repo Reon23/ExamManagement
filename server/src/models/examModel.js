@@ -1,9 +1,9 @@
 import pool from "../config/db.js";
 
-export const createExamService = async (qid, iid, total_marks) => {
+export const createExamService = async (qid, iid, title, total_marks) => {
     const result = await pool.query(
-        "INSERT INTO exam (qid, iid, total_marks) VALUES ($1, $2, $3) RETURNING *",
-        [qid, iid, total_marks]
+        "INSERT INTO exam (qid, iid, title, total_marks) VALUES ($1, $2, $3, $4) RETURNING *",
+        [qid, iid, title, total_marks]
     );
     return result.rows[0];
 }

@@ -4,8 +4,10 @@ import { handleNavigation } from './utils/Navigation';
 import { ServerContext } from '../../../context/ServerContext';
 import CreateExam from '../../../images/createexam.png';
 import ManageExam from '../../../images/manageexam.png';
+import EmptyBox from '../../../images/box.png';
 import ArticleIcon from '@mui/icons-material/Article';
 import SearchIcon from '@mui/icons-material/Search';
+import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -24,10 +26,11 @@ const Card = ({ title, img}) => {
 }
 
 const CreatePage = () => {
-    const { buffer, setBuffer, bankDetails, setBankDetails, questionBanks, setQuestionBanks, fetchInstructorBanks, fetchAllBanks, searchForBanks, getBankDetails } = useContext(ServerContext);
+    const { buffer, setBuffer, bankDetails, setBankDetails, questionBanks, setQuestionBanks, fetchInstructorBanks, fetchAllBanks, searchForBanks, getBankDetails, createExam } = useContext(ServerContext);
     const [title, setTitle] = useState();
     const [searchQuery, setSearchQuery] = useState("");
     const [type, setType] = useState("own");
+    const [requirementsMet, setRequirementsMet] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -70,6 +73,19 @@ const CreatePage = () => {
         }
     }
 
+    const handleSubmit = () => {
+        setRequirementsMet(true);
+        if(title && buffer.id && bankDetails.questions && bankDetails.total_marks) {
+            createExam(buffer.id, title, bankDetails.total_marks)
+            setBuffer([]);
+            setBankDetails([]);
+            handleNavigation(navigate, "exam");
+        }
+        else {
+            setRequirementsMet(false)
+        }
+    }
+
     return(
         <div className='fixed left-[5.5rem] w-full h-screen bg-gray-800'>
             <h1 className='text-3xl font-bold p-10 text-gray-300'>Create</h1>
@@ -78,11 +94,14 @@ const CreatePage = () => {
                     <div className='w-full flex flex-col h-full'>
                         <div className='flex items-center justify-between my-2'>
                             <h1 className='text-3xl font-bold text-gray-400 mb-4'>Exam Details</h1>
-                            <div className='flex gap-2 mr-5'>
+                            <div className='flex gap-2 mr-5 items-center'>
+                                {!requirementsMet && (
+                                    <span className='text-red-500 mr-5'>*Requirements not met</span>
+                                )}
                                 <button className='text-gray-300 hover:text-white border-gray-300 hover:border-white border-[1px] p-2 rounded-md cursor-pointer' onClick={() => {setBuffer([]); setBankDetails([]); handleNavigation(navigate, "exam")}}>
                                     Back
                                 </button>
-                                <button className='text-green-600 hover:text-green-700 bg-border-600 hover:border-green-700 border-[1px] p-2 rounded-md cursor-pointer'>
+                                <button className='text-green-600 hover:text-green-700 bg-border-600 hover:border-green-700 border-[1px] p-2 rounded-md cursor-pointer' onClick={handleSubmit}>
                                     create
                                 </button>
                             </div>
@@ -160,7 +179,24 @@ const CreatePage = () => {
 }
 
 const ExamPage = () => {
+    const { fetchInstructorExams, exams } = useContext(ServerContext);
+    const [ recentExams, setRecentExams] = useState([]);
+    const recentCount = 5;
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchInstructorExams(); 
+    }, [])
+
+    useEffect(() => {
+        if(exams) {
+            setRecentExams(exams.slice(0, recentCount))
+        }
+    }, [exams])
+
+    const handleDelete = (id) => {
+
+    }
 
     return (
         <div className='fixed left-[5.5rem] w-full h-screen bg-gray-800'>
@@ -172,6 +208,34 @@ const ExamPage = () => {
                 <Card title={"Manage Exams"} img={ManageExam} />
             </div>
             <h1 className='text-3xl font-bold p-10 text-gray-300'>Recent Exams</h1>
+            {exams ? (
+                <>
+                    <div className='bg-gray-900 ml-[2rem] mr-[8rem] h-[40vh] mb-5 px-4 py-2 rounded-md shadow-lg overflow-y-auto'>
+                        {recentExams.map((item, key) => (
+                            <div key={key}>
+                                <div className='bg-gray-700 p-3 mt-2 rounded-lg flex justify-between items-center shadow-xl scale-up-center-normal'>
+                                    <div className='flex items-center'>
+                                        <ArticleIcon fontSize='large' color='warning' />
+                                        <span className='text-2xl text-white ml-2'>{item.title}</span>
+                                    </div>
+                                    <div className='flex items-center self-center'>
+                                        <button className='bg-red-500 hover:bg-red-600 p-2 rounded-lg cursor-pointer mr-2' onClick={() => handleDelete(item.id)}>
+                                            <DeleteIcon fontSize='medium' sx={{ color: 'white' }} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <div className='bg-gray-900 ml-[8rem] mr-[2rem] rounded-md'>
+                    <div className='flex flex-col p-5 w-full justify-center items-center'>
+                        <img src={EmptyBox} className='w-[10rem] opacity-45 grayscale' />
+                        <span className='text-xl text-gray-400 w-1/10 text-center'>Recent banks will appear here!</span>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
